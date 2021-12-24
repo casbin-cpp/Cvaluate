@@ -118,7 +118,7 @@ namespace Cvaluate {
                 auto token_string = ReadTokenUntilFalse(stream, IsVariableName);
 
                 token_value = token_string;
-                kind = TokenKind::STRING;
+                kind = TokenKind::VARIABLE;
 
                 // boolen
                 if (token_string == "true") {
@@ -131,7 +131,7 @@ namespace Cvaluate {
 
                 // operator
                 if (token_string == "in" || token_string == "IN") {
-                    token_value = "in";
+                    token_value = std::string("in");
                     kind = TokenKind::COMPARATOR;
                 }
 

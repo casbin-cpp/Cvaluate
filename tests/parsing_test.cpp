@@ -21,13 +21,13 @@ struct TokenParsingTest {
     So, we can't directly compare to std::function variable in std::variant
 */
 template<typename T>
-void Assert_Token(Cvaluate::ExpressionToken& expected_token, Cvaluate::ExpressionToken& actual_token) {
+void Assert_Token(Cvaluate::ExpressionToken& expected_token, Cvaluate::ExpressionToken& actual_token, TokenParsingTest& test_case) {
 
     if (auto expected_value = std::get_if<T>(&(expected_token.Value))) {
         if (auto actual_value = std::get_if<T>(&(actual_token.Value))) {
-            ASSERT_TRUE(*expected_value == *actual_value);
+            ASSERT_EQ(*expected_value, *actual_value) << "Vaule don't match " << test_case.Name;
         } else {
-            ASSERT_TRUE(false);
+            FAIL() << test_case.Name << "\n Value type don't match, expected: ";
         }
     }
 
@@ -47,19 +47,20 @@ void RunTokenParsingTest(std::vector<TokenParsingTest>& token_parsing_tests) {
             auto expected_token = expected_tokens[i];
 
             // Token kind
-            ASSERT_EQ(actual_token.Kind, expected_token.Kind);
+            ASSERT_EQ(actual_token.Kind, expected_token.Kind)
+                << test_case.Name << "\nType don't match!";;
             
             // Token value
             // int
-            Assert_Token<int>(actual_token, expected_token);
+            Assert_Token<int>(actual_token, expected_token, test_case);
             // boolen
-            Assert_Token<bool>(actual_token, expected_token);
+            Assert_Token<bool>(actual_token, expected_token, test_case);
             // float
-            Assert_Token<float>(actual_token, expected_token);
+            Assert_Token<float>(actual_token, expected_token, test_case);
             // string
-            Assert_Token<std::string>(actual_token, expected_token);
+            Assert_Token<std::string>(actual_token, expected_token, test_case);
             // string vector
-            Assert_Token<std::vector<std::string>>(actual_token, expected_token);
+            Assert_Token<std::vector<std::string>>(actual_token, expected_token, test_case);
         }
     }
 }
@@ -145,7 +146,7 @@ TEST(TestParse, TestConstantParsing) {
 
         {
             "Single string",
-            "foo",
+            "'foo'",
             {
                 {
                     Cvaluate::TokenKind::STRING,
@@ -472,6 +473,602 @@ TEST(TestParse, TestConstantParsing) {
 				},
 			},
 		},
+    };
+
+    RunTokenParsingTest(token_parsing_tests);
+}
+
+TEST(TestParse, TestLogicalOperatorParsing) {
+    std::vector<TokenParsingTest> token_parsing_tests = {
+		{
+
+			"Boolean AND",
+			"true && false",
+			{
+			    {
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)true,
+				},
+				{
+					Cvaluate::TokenKind::LOGICALOP,
+					std::string("&&"),
+				},
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)false,
+				},
+			},
+		},
+
+		{
+
+			"Boolean OR",
+			"true || false",
+			{
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)true,
+				},
+				{
+					Cvaluate::TokenKind::LOGICALOP,
+					std::string("||"),
+				},
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)false,
+				},
+			},
+		},
+		
+        {
+
+			"Multiple logical operators",
+			"true || false && true",
+			{
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)true,
+				},
+				{
+					Cvaluate::TokenKind::LOGICALOP,
+					std::string("||"),
+				},
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)false,
+				},
+				{
+					Cvaluate::TokenKind::LOGICALOP,
+					std::string("&&"),
+				},
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					(bool)true,
+				},
+			},
+		},
+        
+    };
+
+    RunTokenParsingTest(token_parsing_tests);
+}
+
+TEST(TestParse, TestComparatorParsing) {
+    std::vector<TokenParsingTest> token_parsing_tests = {
+		{
+
+			"Numeric EQ",
+			"1 == 2",
+			{
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					(int)1,
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					(int)2,
+				},
+			},
+		},
+		{
+
+			"Numeric NEQ",
+			"1 != 2",
+			{
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					(int)1,
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("!="),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					(int)2,
+				},
+			},
+		},
+		{
+
+			"Numeric GT",
+			"1 > 0",
+			{
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					(int)1,
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string(">"),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					(int)0,
+				},
+			},
+		},
+		{
+
+			"Numeric LT",
+			"1 < 2",
+			{
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(1),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("<"),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(2),
+				},
+			},
+		},
+		{
+
+			"Numeric GTE",
+			"1 >= 2",
+			{
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(1),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string(">="),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(2),
+				},
+			},
+		},
+		{
+
+		    "Numeric LTE",
+			"1 <= 2",
+			{
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(1),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("<="),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(2),
+				},
+			},
+		},
+		TokenParsingTest{
+
+			"String LT",
+			"'ab.cd' < 'abc.def'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("ab.cd"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("<"),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("abc.def"),
+				},
+			},
+		},
+		{
+
+			"String LTE",
+			"'ab.cd' <= 'abc.def'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("ab.cd"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("<="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("abc.def"),
+				},
+			},
+		},
+		{
+
+			"String GT",
+			"'ab.cd' > 'abc.def'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("ab.cd"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string(">"),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("abc.def"),
+				},
+			},
+		},
+		{
+
+			"String GTE",
+			"'ab.cd' >= 'abc.def'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("ab.cd"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string(">="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("abc.def"),
+				},
+			},
+		},
+		// {
+
+		// 	"String REQ",
+		// 	"'foobar' =~ 'bar'",
+		// 	{
+		// 		{
+		// 			Cvaluate::TokenKind::STRING,
+		// 			std::string("foobar"),
+		// 		},
+		// 		{
+		// 			Cvaluate::TokenKind::COMPARATOR,
+		// 			std::string("=~"),
+		// 		},
+
+		// 		// it's not particularly clean to test for the contents of a pattern, (since it means modifying the harness below)
+		// 		// so pattern contents are left untested.
+		// 		ExpressionToken{
+		// 			Cvaluate::TokenKind::PATTERN,
+        //             std::string("");
+		// 		},
+		// 	},
+		// },
+		// TokenParsingTest{
+
+		// 	Name:  "String NREQ",
+		// 	Input: "'foobar' !~ 'bar'",
+		// 	Expected: []ExpressionToken{
+		// 		ExpressionToken{
+		// 			Cvaluate::TokenKind::STRING,
+		// 			Value: "foobar",
+		// 		},
+		// 		ExpressionToken{
+		// 			Cvaluate::TokenKind::COMPARATOR,
+		// 			Value: "!~",
+		// 		},
+		// 		ExpressionToken{
+		// 			Kind: PATTERN,
+		// 		},
+		// 	},
+		// },
+		{
+
+			"Comparator against modifier string additive (#22)",
+			"'foo' == '+'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("+"),
+				},
+			},
+		},
+		{
+
+			"Comparator against modifier string multiplicative (#22)",
+			"'foo' == '/'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("/"),
+				},
+			},
+		},
+		{
+
+			"Comparator against modifier string exponential (#22)",
+			"'foo' == '**'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("**"),
+				},
+			},
+		},
+		{
+
+			"Comparator against modifier string bitwise (#22)",
+			"'foo' == '^'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("^"),
+				},
+			},
+		},
+		{
+
+			"Comparator against modifier string shift (#22)",
+			"'foo' == '>>'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string(">>"),
+				},
+			},
+		},
+		TokenParsingTest{
+
+			"Comparator against modifier string ternary (#22)",
+			"'foo' == '?'",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("=="),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("?"),
+				},
+			},
+		},
+		{
+
+			"Array membership lowercase",
+			"'foo' in ('foo', 'bar')",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("in"),
+				},
+				{
+					Cvaluate::TokenKind::CLAUSE,
+                    std::string("("),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::SEPARATOR,
+                    std::string(","),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+				    std::string("bar"),
+				},
+				{
+					Cvaluate::TokenKind::CLAUSE_CLOSE,
+                    std::string(")"),
+				},
+			},
+		},
+		{
+
+			"Array membership uppercase",
+			"'foo' IN ('foo', 'bar')",
+			{
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::COMPARATOR,
+					std::string("in"),
+				},
+				{
+					Cvaluate::TokenKind::CLAUSE,
+                    std::string("("),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("foo"),
+				},
+				{
+					Cvaluate::TokenKind::SEPARATOR,
+                    std::string(","),
+				},
+				{
+					Cvaluate::TokenKind::STRING,
+					std::string("bar"),
+				},
+				{
+					Cvaluate::TokenKind::CLAUSE_CLOSE,
+                    std::string(")"),
+				},
+			},
+		},
+        
+    };
+
+    RunTokenParsingTest(token_parsing_tests);
+}
+
+TEST(TestParse, TestPrefixParsing) {
+    std::vector<TokenParsingTest> token_parsing_tests = {
+
+		{
+
+			"Sign prefix",
+			"-1",
+			{
+				{
+					Cvaluate::TokenKind::PREFIX,
+					std::string("-"),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(1),
+				},
+			},
+		},
+		{
+
+			"Sign prefix on variable",
+			"-foo",
+			{
+				{
+					Cvaluate::TokenKind::PREFIX,
+					std::string("-"),
+				},
+				{
+					Cvaluate::TokenKind::VARIABLE,
+					std::string("foo"),
+				},
+			},
+		},
+		{
+
+			"Boolean prefix",
+			"!true",
+			{
+				{
+					Cvaluate::TokenKind::PREFIX,
+					std::string("!"),
+				},
+				{
+					Cvaluate::TokenKind::BOOLEAN,
+					bool(true),
+				},
+			},
+		},
+		{
+
+			"Boolean prefix on variable",
+			"!foo",
+			{
+				{
+					Cvaluate::TokenKind::PREFIX,
+					std::string("!"),
+				},
+				{
+					Cvaluate::TokenKind::VARIABLE,
+					std::string("foo"),
+				},
+			},
+		},
+		{
+
+			"Bitwise not prefix",
+			"~1",
+			{
+				{
+					Cvaluate::TokenKind::PREFIX,
+					std::string("~"),
+				},
+				{
+					Cvaluate::TokenKind::NUMERIC,
+					int(1),
+				},
+			},
+		},
+		{
+
+			"Bitwise not prefix on variable",
+			"~foo",
+			{
+				{
+					Cvaluate::TokenKind::PREFIX,
+					std::string("~"),
+				},
+				{
+					Cvaluate::TokenKind::VARIABLE,
+					std::string("foo"),
+				},
+			},
+		},
+
     };
 
     RunTokenParsingTest(token_parsing_tests);

@@ -22,6 +22,6 @@ Provides support for evaluating arbitrary C-like artithmetic/string expressions 
 - [ ] Support variable and accessors.
     - [ ] Support `Eval(params)`, `params` is a `map` like `name: object` in `gvaluate `.
     - [ ] Basic data type of `params` is `int ,float, string`.
-    - [ ] Object data of `params` should reload `operator[]` and `operator` for `access` and compare. Maybe we accomplish it by can define a base object or use template to support accessors.
+    - [ ] Object data of `params` should reload `operator[]` and `operator` for `access` and compare. Maybe we can accomplish it by define a base object or use template to support accessors.
 
 - [ ] Add benchmark for Cvaluate.
