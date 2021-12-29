@@ -38,4 +38,13 @@ namespace Cvaluate {
         state = kValidTokenStates[0];
         return false;
     }
+
+
+    std::string GetTokenValueString(TokenAvaiableValue& token_value) {
+        if (auto value = std::get_if<std::string>(&token_value)) {
+            return *value;
+        } else {
+            throw "Can't get string from current token";
+        }
+    }
 } // Cvaluate
