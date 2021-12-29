@@ -39,9 +39,31 @@ namespace Cvaluate {
         return false;
     }
 
-
     std::string GetTokenValueString(TokenAvaiableValue& token_value) {
         if (auto value = std::get_if<std::string>(&token_value)) {
+            return *value;
+        } else {
+            throw "Can't get string from current token";
+        }
+    }
+    int GetTokenValueInt(TokenAvaiableValue token_value) {
+        if (auto value = std::get_if<int>(&token_value)) {
+            return *value;
+        } else {
+            throw "Can't get string from current token";
+        }
+    }
+
+    float GetTokenValueFloat(TokenAvaiableValue token_value) {
+        if (auto value = std::get_if<float>(&token_value)) {
+            return *value;
+        } else {
+            throw "Can't get string from current token";
+        }
+    }
+
+    bool GetTokenValueBool(TokenAvaiableValue token_value) {
+        if (auto value = std::get_if<bool>(&token_value)) {
             return *value;
         } else {
             throw "Can't get string from current token";
