@@ -19,6 +19,7 @@
 #include <pch.h>
 #include <Token.h>
 #include <Parising.h>
+#include <StagePlanner.h>
 
 namespace Cvaluate {
 
@@ -26,6 +27,9 @@ class EvaluableExpression {
     private:
         std::string e_input;
         std::vector<ExpressionToken> e_tokens;
+        std::shared_ptr<EvaluationStage> e_evaluation_stage;
+
+        TokenAvaiableValue EvaluateStage(std::shared_ptr<EvaluationStage>, Parameters);
     public:
         /**
          * Default constructor.
@@ -39,6 +43,8 @@ class EvaluableExpression {
          * Return Tokens copy
          */
         std::vector<ExpressionToken> Tokens();
+
+        TokenAvaiableValue Evaluate(Parameters);
 };
 
 }
