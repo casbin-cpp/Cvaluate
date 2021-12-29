@@ -63,82 +63,78 @@ namespace Cvaluate {
 
     using StringOperatorSymbolMap = std::unordered_map<std::string, OperatorSymbol>;
 
-    namespace {
-        // using OperatorSymbol;
-        const StringOperatorSymbolMap kComparatorSymbols = {
-            {"==", OperatorSymbol::EQ},
-            {"!=", OperatorSymbol::NEQ},
-            {">", OperatorSymbol::GT},
-            {">=", OperatorSymbol::GTE},
-            {"<",  OperatorSymbol::LT},
-            {"<=", OperatorSymbol::LTE},
-            {"=~", OperatorSymbol::REQ},
-            {"!~", OperatorSymbol::NREQ},
-            {"in", OperatorSymbol::IN},
-        };
+    const StringOperatorSymbolMap kComparatorSymbols = {
+        {"==", OperatorSymbol::EQ},
+        {"!=", OperatorSymbol::NEQ},
+        {">", OperatorSymbol::GT},
+        {">=", OperatorSymbol::GTE},
+        {"<",  OperatorSymbol::LT},
+        {"<=", OperatorSymbol::LTE},
+        {"=~", OperatorSymbol::REQ},
+        {"!~", OperatorSymbol::NREQ},
+        {"in", OperatorSymbol::IN},
+    };
 
-        const StringOperatorSymbolMap kLogicalSymbols = {
-            {"&&", OperatorSymbol::AND},
-            {"||", OperatorSymbol::OR},
-        };
+    const StringOperatorSymbolMap kLogicalSymbols = {
+        {"&&", OperatorSymbol::AND},
+        {"||", OperatorSymbol::OR},
+    };
 
-        const StringOperatorSymbolMap kBitwiseSymbols= {
-            {"^", OperatorSymbol::BITWISE_XOR},
-            {"&", OperatorSymbol::BITWISE_AND},
-            {"|", OperatorSymbol::BITWISE_OR},
-        };
+    const StringOperatorSymbolMap kBitwiseSymbols= {
+        {"^", OperatorSymbol::BITWISE_XOR},
+        {"&", OperatorSymbol::BITWISE_AND},
+        {"|", OperatorSymbol::BITWISE_OR},
+    };
 
-        const StringOperatorSymbolMap kBitwiseShiftSymbols = {
-            {">>", OperatorSymbol::BITWISE_RSHIFT},
-            {"<<", OperatorSymbol::BITWISE_LSHIFT},
-        };
+    const StringOperatorSymbolMap kBitwiseShiftSymbols = {
+        {">>", OperatorSymbol::BITWISE_RSHIFT},
+        {"<<", OperatorSymbol::BITWISE_LSHIFT},
+    };
 
-        const StringOperatorSymbolMap kAdditiveSymbols = {
-            {"+", OperatorSymbol::PLUS},
-            {"-", OperatorSymbol::MINUS},
-        };
+    const StringOperatorSymbolMap kAdditiveSymbols = {
+        {"+", OperatorSymbol::PLUS},
+        {"-", OperatorSymbol::MINUS},
+    };
 
-        const StringOperatorSymbolMap kMultiplicativeSymbols = {
-            {"*", OperatorSymbol::MULTIPLY},
-            {"/", OperatorSymbol::DIVIDE},
-            {"%", OperatorSymbol::MODULUS},
-        };
+    const StringOperatorSymbolMap kMultiplicativeSymbols = {
+        {"*", OperatorSymbol::MULTIPLY},
+        {"/", OperatorSymbol::DIVIDE},
+        {"%", OperatorSymbol::MODULUS},
+    };
 
-        const StringOperatorSymbolMap kExponentialSymbolsS = {
-            {"**", OperatorSymbol::EXPONENT},
-        };
+    const StringOperatorSymbolMap kExponentialSymbolsS = {
+        {"**", OperatorSymbol::EXPONENT},
+    };
 
-        const StringOperatorSymbolMap kPrefixSymbols = {
-            {"-", OperatorSymbol::NEGATE},
-            {"!", OperatorSymbol::INVERT},
-            {"~", OperatorSymbol::BITWISE_NOT},
-        };
+    const StringOperatorSymbolMap kPrefixSymbols = {
+        {"-", OperatorSymbol::NEGATE},
+        {"!", OperatorSymbol::INVERT},
+        {"~", OperatorSymbol::BITWISE_NOT},
+    };
 
-        const StringOperatorSymbolMap kTernarySymbols = {
-            {"?", OperatorSymbol::TERNARY_TRUE},
-            {":", OperatorSymbol::TERNARY_FALSE},
-            {"??", OperatorSymbol::COALESCE},
-        };
+    const StringOperatorSymbolMap kTernarySymbols = {
+        {"?", OperatorSymbol::TERNARY_TRUE},
+        {":", OperatorSymbol::TERNARY_FALSE},
+        {"??", OperatorSymbol::COALESCE},
+    };
 
-        const StringOperatorSymbolMap kModifierSymbols = {
-            {"+", OperatorSymbol::PLUS},
-            {"-", OperatorSymbol::MINUS},
-            {"*", OperatorSymbol::MULTIPLY},
-            {"/", OperatorSymbol::DIVIDE},
-            {"%", OperatorSymbol::MODULUS},
-            {"**", OperatorSymbol::EXPONENT},
-            {"&", OperatorSymbol::BITWISE_AND},
-            {"|", OperatorSymbol::BITWISE_OR},
-            {"^", OperatorSymbol::BITWISE_XOR},
-            {">>", OperatorSymbol::BITWISE_RSHIFT},
-            {"<<", OperatorSymbol::BITWISE_LSHIFT},
-        };
+    const StringOperatorSymbolMap kModifierSymbols = {
+        {"+", OperatorSymbol::PLUS},
+        {"-", OperatorSymbol::MINUS},
+        {"*", OperatorSymbol::MULTIPLY},
+        {"/", OperatorSymbol::DIVIDE},
+        {"%", OperatorSymbol::MODULUS},
+        {"**", OperatorSymbol::EXPONENT},
+        {"&", OperatorSymbol::BITWISE_AND},
+        {"|", OperatorSymbol::BITWISE_OR},
+        {"^", OperatorSymbol::BITWISE_XOR},
+        {">>", OperatorSymbol::BITWISE_RSHIFT},
+        {"<<", OperatorSymbol::BITWISE_LSHIFT},
+    };
 
-        const StringOperatorSymbolMap kSeparatorSymbols = {
-            {",", OperatorSymbol::SEPARATE}
-        };
-    }
-    
+    const StringOperatorSymbolMap kSeparatorSymbols = {
+        {",", OperatorSymbol::SEPARATE}
+    };
 
 } // Cvaluate
 #endif
