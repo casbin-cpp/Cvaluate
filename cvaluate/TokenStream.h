@@ -25,13 +25,19 @@ namespace Cvaluate {
             std::vector<ExpressionToken> tokens;
             std::vector<ExpressionToken>::iterator index;
         public:
-            TokenStream(std::vector<ExpressionToken> _tokens) : tokens(_tokens), index(_tokens.begin()) {};
+            TokenStream(std::vector<ExpressionToken> _tokens) : tokens(_tokens) {
+                this->index = tokens.begin();
+            };
+
             void Rewind() {
                 this->index -= 1;
             }
+
             std::vector<ExpressionToken>::iterator Next() {
                 this->index += 1;
+                return this->index - 1;
             }
+
             bool HasNext() {
                 return this->index < this->tokens.end();
             }

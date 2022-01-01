@@ -14,8 +14,9 @@ Provides support for evaluating arbitrary C-like artithmetic/string expressions 
 - [x] Parse expression and get tokens.
     - [x] Parse expression.
     - [ ] Check tokens syntax and  check balance.
-    - [ ] Test parse tokens.
+    - [x] Test parse tokens.
 - [ ] Build  expression tree by tokens.
+    - [x] Support baisc numeric add expression `1 + 49`.
     - [ ] Design  expression tree like [evaluationStage](https://github.com/Knetic/govaluate/blob/master/evaluationStage.go).
     - [ ] Test expression tree.
 - [ ] Support basic math expression.

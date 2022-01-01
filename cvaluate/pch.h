@@ -41,5 +41,6 @@
 #include <fstream>
 #include <sstream>
 #include <cstdio>
+#include <cmath>
 
 #endif //PCH_H

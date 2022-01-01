@@ -26,41 +26,51 @@ namespace Cvaluate {
         It's called a `precedent` because it is expected to handle exactly what precedence of operator,
         and defer to other `precedent`s for other operators.
     */
-    class Precedent {
+    using Precedent = std::function<std::shared_ptr<EvaluationStage>(TokenStream&)>;
+
+    class PrecedencePlanner {
         public:
-            using function_type = std::function<std::shared_ptr<EvaluationStage>(TokenStream)>;
-            function_type generate_func = nullptr;
-            const StringOperatorSymbolMap valid_symbols;
+            StringOperatorSymbolMap valid_symbols;
             std::vector<TokenKind> valid_kinds;
-            Precedent* next;
-            Precedent* next_right;
+            Precedent next;
+            Precedent next_right;
 
-            Precedent(function_type func) {
-                generate_func = func;
-            }
+            PrecedencePlanner(StringOperatorSymbolMap valid_symbols, std::vector<TokenKind> valid_kinds,
+                            Precedent next, Precedent next_right) {
+                this->valid_symbols = valid_symbols;
+                this->valid_kinds = valid_kinds;
+                this->next = next;
+                this->next_right = next_right;
+            };
 
-            Precedent(const StringOperatorSymbolMap valid_symbols_, std::vector<TokenKind> valid_kinds_,
-                    Precedent* next_, Precedent* next_right_) :
-                    valid_symbols(valid_symbols_), valid_kinds(valid_kinds_), next(next_), next_right(next_right_) {
-                generate_func = nullptr;
-            }
-
-            std::shared_ptr<EvaluationStage> PlanPrecedenceLevel(TokenStream stream,
-                const StringOperatorSymbolMap vlaid_symbols, std::vector<TokenKind> valid_kinds,
-                Precedent* right_precedent, Precedent* left_precedent);
+            std::shared_ptr<EvaluationStage> PlanPrecedenceLevel(TokenStream& stream,
+                StringOperatorSymbolMap vlaid_symbols, std::vector<TokenKind> valid_kinds,
+                Precedent right_precedent, Precedent left_precedent);
 
             std::shared_ptr<EvaluationStage> operator()(TokenStream& stream) {
-                if (!IsNullptrFunction()) {
-                    return generate_func(stream);
-                } else {
-                    return PlanPrecedenceLevel(stream, valid_symbols, valid_kinds, next, next_right);
-                }
-            }
+                Precedent generated = nullptr;
+                Precedent nextRight = nullptr;
 
-            bool IsNullptrFunction() {
-                return generate_func == nullptr;
+                generated = [&] (TokenStream& stream) -> std::shared_ptr<EvaluationStage> {
+                    return PlanPrecedenceLevel(
+                        stream,
+                        this->valid_symbols,
+                        this->valid_kinds,
+                        nextRight,
+                        this->next
+                    );
+                };
+
+                if (this->next_right != nullptr) {
+                    nextRight = this->next_right;
+                } else {
+                    nextRight = generated;
+                }
+                
+                return generated(stream);
             }
     };
+
     /*
 	Convenience function to pass a triplet of typechecks between `findTypeChecks` and `planPrecedenceLevel`.
 	Each of these members may be nil, which indicates that type does not matter for that value.
@@ -71,14 +81,13 @@ namespace Cvaluate {
         StageCombinedTypeCheck combined;
     };
     
-
-    std::shared_ptr<EvaluationStage> PlanStages(std::vector<ExpressionToken> tokens);
+    std::shared_ptr<EvaluationStage> PlanStages(std::vector<ExpressionToken>& tokens);
     std::shared_ptr<EvaluationStage> PlanTokens(TokenStream& stream);
     void RecorderStages(std::shared_ptr<EvaluationStage> root_stage);
 
-    std::shared_ptr<EvaluationStage> PlanFunctions(TokenStream stream);
-    std::shared_ptr<EvaluationStage> PlanAccessor(TokenStream stream);
-    std::shared_ptr<EvaluationStage> PlanValue(TokenStream stream);
+    std::shared_ptr<EvaluationStage> PlanFunctions(TokenStream& stream);
+    std::shared_ptr<EvaluationStage> PlanAccessor(TokenStream& stream);
+    std::shared_ptr<EvaluationStage> PlanValue(TokenStream& stream);
     TypeChecks FindTypeChecks(OperatorSymbol);
 } //Cvaluate
 

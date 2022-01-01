@@ -363,6 +363,7 @@ namespace Cvaluate {
     std::string GetTokenValueString(TokenAvaiableValue);
     int GetTokenValueInt(TokenAvaiableValue);
     float GetTokenValueFloat(TokenAvaiableValue);
+    float GetTokenValueNumeric(TokenAvaiableValue);
     bool GetTokenValueBool(TokenAvaiableValue);
 } // Cvaluate
 

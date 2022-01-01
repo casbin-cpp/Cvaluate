@@ -56,6 +56,8 @@ namespace Cvaluate {
     bool IsString(TokenAvaiableValue value);
     bool IsBool(TokenAvaiableValue value);
     bool IsNumeric(TokenAvaiableValue value);
+    bool IsFloat(TokenAvaiableValue value);
+    bool IsInt(TokenAvaiableValue value);
     bool IsArray(TokenAvaiableValue value);
     bool IsRegexOrString(TokenAvaiableValue value);
     bool AdditionTypeCheck(TokenAvaiableValue left, TokenAvaiableValue right);

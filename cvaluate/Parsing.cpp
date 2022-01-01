@@ -15,6 +15,7 @@
 */
 
 #include <Parising.h>
+#include <Exception.h>
 
 namespace Cvaluate {
     std::vector<ExpressionToken> ParseTokens(std::string& expression, ExpressionFunctionMap& functions) {
@@ -106,7 +107,7 @@ namespace Cvaluate {
                 token_value = token_string;
 
                 if (!ok) {
-                    throw "Broken operator of []";
+                    throw CvaluateException("Broken operator of []");
                     return ret;
                 }
 
@@ -145,7 +146,7 @@ namespace Cvaluate {
                 size_t accessor_index = token_string.find('.');
                 if (accessor_index != std::string::npos) {
                     if (token_string.back() == '.') {
-                        throw "Hanging accessor on token" + token_string;
+                        throw CvaluateException("Hanging accessor on token" + token_string);
                     }
 
                     kind = TokenKind::ACCESSOR;
@@ -160,7 +161,7 @@ namespace Cvaluate {
                 auto [token_string, ok] = ReadUntilFalse(stream, true, false, true, IsNotQuote);
 
                 if (!ok) {
-                    throw "Unclosed string literal \' \'";
+                    throw CvaluateException("Unclosed string literal \' \'");
                 }
 
                 stream.get();
@@ -216,7 +217,7 @@ namespace Cvaluate {
                 break;
             }
 
-            throw "Unsupport token:" + token_string;
+            throw CvaluateException("Unsupport token:" + token_string);
 
             return ret;
         }

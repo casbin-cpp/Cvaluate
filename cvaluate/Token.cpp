@@ -15,6 +15,7 @@
 */
 
 #include <Token.h>
+#include <Exception.h>
 
 namespace Cvaluate {
     bool CanTransitionTo(const TokenState& cur_state, const TokenKind& next_kind) {
@@ -39,18 +40,19 @@ namespace Cvaluate {
         return false;
     }
 
-    std::string GetTokenValueString(TokenAvaiableValue& token_value) {
+    std::string GetTokenValueString(TokenAvaiableValue token_value) {
         if (auto value = std::get_if<std::string>(&token_value)) {
             return *value;
         } else {
-            throw "Can't get string from current token";
+            throw CvaluateException("Can't get string from current token");
         }
     }
+
     int GetTokenValueInt(TokenAvaiableValue token_value) {
         if (auto value = std::get_if<int>(&token_value)) {
             return *value;
         } else {
-            throw "Can't get string from current token";
+            throw CvaluateException("Can't get int from current token");
         }
     }
 
@@ -58,7 +60,18 @@ namespace Cvaluate {
         if (auto value = std::get_if<float>(&token_value)) {
             return *value;
         } else {
-            throw "Can't get string from current token";
+            throw CvaluateException("Can't get float from current token");
+        }
+    }
+
+
+    float GetTokenValueNumeric(TokenAvaiableValue token_value) {
+        if (auto value = std::get_if<int>(&token_value)) {
+            return *value;
+        } else if (auto value = std::get_if<float>(&token_value)) {
+            return *value;
+        } else {
+            throw CvaluateException("Can't get float from current token");
         }
     }
 
@@ -66,7 +79,7 @@ namespace Cvaluate {
         if (auto value = std::get_if<bool>(&token_value)) {
             return *value;
         } else {
-            throw "Can't get string from current token";
+            throw CvaluateException("Can't get bool from current token");
         }
     }
 } // Cvaluate

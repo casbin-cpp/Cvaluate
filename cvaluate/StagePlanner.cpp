@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 #include <StagePlanner.h>
+#include <Exception.h>
 
 namespace Cvaluate {
     std::unordered_map<OperatorSymbol, EvaluationOperator> kStageSymbolMap = {
@@ -48,25 +49,25 @@ namespace Cvaluate {
         {OperatorSymbol::SEPARATE, SeparatorStage},
     };
 
-    Precedent planFunctions = Precedent(PlanFunctions);
-    Precedent planPrefix(kPrefixSymbols, {TokenKind::PREFIX}, nullptr, &planFunctions);
-    Precedent planExponential(kExponentialSymbolsS, {TokenKind::MODIFIER}, &planFunctions, nullptr);
-    Precedent planMultiplicative(kMultiplicativeSymbols, {TokenKind::MODIFIER}, &planExponential, nullptr);
-    Precedent planAdditive(kAdditiveSymbols, {TokenKind::MODIFIER}, &planMultiplicative, nullptr);
-    Precedent planShift(kBitwiseShiftSymbols, {TokenKind::MODIFIER}, &planAdditive, nullptr);
-    Precedent planBitwise(kBitwiseSymbols, {TokenKind::MODIFIER}, &planShift, nullptr);
-    Precedent planComparator(kComparatorSymbols, {TokenKind::MODIFIER}, &planBitwise, nullptr);
-    Precedent planLogicalAnd({{"&&", OperatorSymbol::AND}}, {TokenKind::LOGICALOP}, &planComparator, nullptr);
-    Precedent planLogicalOr({{"||", OperatorSymbol::OR}}, {TokenKind::LOGICALOP}, &planLogicalAnd, nullptr);
-    Precedent planTernary(kTernarySymbols, {TokenKind::TERNARY}, &planLogicalOr, nullptr);
-    Precedent planSeparator(kSeparatorSymbols, {TokenKind::SEPARATOR}, &planTernary, nullptr);
+    Precedent planFunctions = PlanFunctions;
+    PrecedencePlanner planPrefix(kPrefixSymbols, {TokenKind::PREFIX}, nullptr, planFunctions);
+    PrecedencePlanner planExponential(kExponentialSymbolsS, {TokenKind::MODIFIER}, planFunctions, nullptr);
+    PrecedencePlanner planMultiplicative(kMultiplicativeSymbols, {TokenKind::MODIFIER}, planExponential, nullptr);
+    PrecedencePlanner planAdditive(kAdditiveSymbols, {TokenKind::MODIFIER}, planMultiplicative, nullptr);
+    PrecedencePlanner planShift(kBitwiseShiftSymbols, {TokenKind::MODIFIER}, planAdditive, nullptr);
+    PrecedencePlanner planBitwise(kBitwiseSymbols, {TokenKind::MODIFIER}, planShift, nullptr);
+    PrecedencePlanner planComparator(kComparatorSymbols, {TokenKind::MODIFIER}, planBitwise, nullptr);
+    PrecedencePlanner planLogicalAnd({{"&&", OperatorSymbol::AND}}, {TokenKind::LOGICALOP}, planComparator, nullptr);
+    PrecedencePlanner planLogicalOr({{"||", OperatorSymbol::OR}}, {TokenKind::LOGICALOP}, planLogicalAnd, nullptr);
+    PrecedencePlanner planTernary(kTernarySymbols, {TokenKind::TERNARY}, planLogicalOr, nullptr);
+    PrecedencePlanner planSeparator(kSeparatorSymbols, {TokenKind::SEPARATOR}, planTernary, nullptr);
 
     /*
         Creates a `evaluationStageList` object which represents an execution plan (or tree)
         which is used to completely evaluate a set of tokens at evaluation-time.
         The three stages of evaluation can be thought of as parsing strings to tokens, then tokens to a stage list, then evaluation with parameters.
     */
-    std::shared_ptr<EvaluationStage> PlanStages(std::vector<ExpressionToken> tokens) {
+    std::shared_ptr<EvaluationStage> PlanStages(std::vector<ExpressionToken>& tokens) {
         auto stream = TokenStream(tokens);
 
         auto stage = PlanTokens(stream);
@@ -84,22 +85,26 @@ namespace Cvaluate {
         return planSeparator(stream);
     }
 
+    void RecorderStages(std::shared_ptr<EvaluationStage> root_stage) {
+        throw CvaluateException("RecorderStages not Implement");
+    }
+
     /*
         The most usual method of parsing an evaluation stage for a given precedence.
         Most stages use the same logic
     */
-    std::shared_ptr<EvaluationStage> Precedent::PlanPrecedenceLevel(TokenStream stream,
-            const StringOperatorSymbolMap vlaid_symbols, std::vector<TokenKind> valid_kinds,
-            Precedent* right_precedent, Precedent* left_precedent) {
+    std::shared_ptr<EvaluationStage> PrecedencePlanner::PlanPrecedenceLevel(TokenStream& stream,
+            StringOperatorSymbolMap valid_symbols, std::vector<TokenKind> valid_kinds,
+            Precedent right_precedent, Precedent left_precedent) {
         ExpressionToken token;
-        OperatorSymbol symbol;
-        std::shared_ptr<EvaluationStage> left_stage = nullptr;
+        OperatorSymbol symbol = OperatorSymbol::OperatorSymbol;
         std::shared_ptr<EvaluationStage> right_stage = nullptr;
+        std::shared_ptr<EvaluationStage> left_stage = nullptr;
         TypeChecks checks;
         bool key_found = false;
 
         if (left_precedent != nullptr) {
-            left_stage = (*left_precedent)(stream);
+            left_stage = left_precedent(stream);
         }
 
         while (stream.HasNext()) {
@@ -116,25 +121,28 @@ namespace Cvaluate {
                 }
             }
 
-            if (!vlaid_symbols.empty()) {
+            if (!valid_symbols.empty()) {
                 if (!IsString(token.Value)) {
                     break;
                 }
 
                 auto token_string = *std::get_if<std::string>(&(token.Value));
 
-                if (vlaid_symbols.find(token_string) == vlaid_symbols.end()) {
+                if (valid_symbols.find(token_string) == valid_symbols.end()) {
                     break;
+                } else {
+                    // TODO 
+                    symbol = valid_symbols[token_string];
                 }
             }
 
             if (right_precedent != nullptr) {
-                right_stage = (*right_precedent)(stream);
+                right_stage = right_precedent(stream);
             }
 
             checks = FindTypeChecks(symbol);
 
-            auto ret = std::make_shared<EvaluationStage>(symbol, std::move(left_stage), std::move(right_stage), kStageSymbolMap[symbol],
+            auto ret = std::make_shared<EvaluationStage>(symbol, left_stage, right_stage, kStageSymbolMap[symbol],
                 checks.left, checks.right, checks.combined);
 
             return ret;
@@ -149,7 +157,7 @@ namespace Cvaluate {
         A truly special precedence function, this handles all the "lowest-case" errata of the process, including literals, parmeters,
         clauses, and prefixes.
     */
-    std::shared_ptr<EvaluationStage> PlanValue(TokenStream stream) {
+    std::shared_ptr<EvaluationStage> PlanValue(TokenStream& stream) {
 
         if (!stream.HasNext()) {
             return nullptr;
@@ -190,6 +198,7 @@ namespace Cvaluate {
             case TokenKind::BOOLEAN: {
                 symbol = OperatorSymbol::LITERAL;
                 plan_operator = MakeLiteralStage(token->Value);
+                break;
             }
 
             case TokenKind::PREFIX: {
@@ -201,7 +210,7 @@ namespace Cvaluate {
         }
 
         if (plan_operator == nullptr) {
-            throw "Unable to plan token";
+            throw CvaluateException("Unable to plan token");
         }
 
         auto ret = std::make_shared<EvaluationStage>(symbol, nullptr, nullptr, plan_operator, nullptr, nullptr, nullptr);
@@ -209,6 +218,27 @@ namespace Cvaluate {
         return ret;
     }
 
+    std::shared_ptr<EvaluationStage> PlanFunctions(TokenStream& stream) {
+        auto token = stream.Next();
+
+        if (token->Kind != TokenKind::FUNCTION) {
+            stream.Rewind();
+            return PlanAccessor(stream);
+        }
+
+        // throw CvaluateException("PlanFunctions Not Implement");
+    }
+
+    std::shared_ptr<EvaluationStage> PlanAccessor(TokenStream& stream) {
+        auto token = stream.Next();
+
+        if (token->Kind != TokenKind::ACCESSOR) {
+            stream.Rewind();
+            return PlanValue(stream);
+        }
+
+        // throw CvaluateException("PlanAccessor Not Implement");
+    }
     /*
         Maps a given [symbol] to a set of typechecks to be used during runtime.
     */

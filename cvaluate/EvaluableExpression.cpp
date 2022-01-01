@@ -24,7 +24,6 @@ EvaluableExpression::EvaluableExpression(std::string expression,
 
     this->e_tokens = ParseTokens(expression, functions);
 
-    this->e_evaluation_stage = PlanStages(this->e_tokens);
 };
 
 std::vector<ExpressionToken> EvaluableExpression::Tokens() {
@@ -32,11 +31,17 @@ std::vector<ExpressionToken> EvaluableExpression::Tokens() {
 }
 
 TokenAvaiableValue EvaluableExpression::Evaluate(Parameters params) {
+
+    this->e_evaluation_stage = PlanStages(this->e_tokens);
+
     return EvaluateStage(this->e_evaluation_stage, params);
 }
 
 TokenAvaiableValue EvaluableExpression::EvaluateStage(std::shared_ptr<EvaluationStage> stage, Parameters params) {
     TokenAvaiableValue left, right;
+    if (stage == nullptr) {
+        // ;
+    }
 
     if (stage != nullptr && stage->left_stage_) {
         left = this->EvaluateStage(stage->left_stage_, params);
@@ -46,7 +51,9 @@ TokenAvaiableValue EvaluableExpression::EvaluateStage(std::shared_ptr<Evaluation
         right = this->EvaluateStage(stage->right_stage_, params);
     }
 
-    return stage->operator_(left, right, params);
+    auto ans = stage->operator_(left, right, params);
+
+    return ans;
 }
 
 } // Cvaluate
