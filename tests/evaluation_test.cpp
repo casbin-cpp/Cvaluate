@@ -49,14 +49,15 @@ void RunEvaluationTests(std::vector<TokenEvaluationTest>& token_evaluation_tests
 
         auto result = expression.Evaluate({});
 
-        Assert_Value<int>(result, test_case.Expected, test_case);
-        Assert_Value<float>(result, test_case.Expected, test_case);
-        Assert_Value<bool>(result, test_case.Expected, test_case);
+        Assert_Value<int>(test_case.Expected, result, test_case);
+        Assert_Value<float>(test_case.Expected, result, test_case);
+        Assert_Value<bool>(test_case.Expected, result, test_case);
     }
 }
 
 TEST(TestEvaluation, TestNoParameterEvaluation) {
     std::vector<TokenEvaluationTest> token_evaluation_tests = {
+        // Basic Operator
         {
 			"Single PLUS",
 			"51 + 49",
@@ -116,12 +117,84 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 			"100 - (5 * 10)",
 		    float(50),
 		},
-        // {
 
-		// 	"Logical OR operation of two clauses",
-		// 	"(1 == 1) || (true == true)",
-		// 	true,
+        // Bool
+        // This cast can't build correct stage
+        {
+
+			"Implicit boolean",
+			"2 > 1",
+		    true,
+		},
+        {
+
+			"Compound boolean",
+			"5 < 10 && 1 < 5",
+			true,
+		},
+        {
+			"Evaluated true && false operation (for issue #8)",
+			"1 > 10 && 11 > 10",
+			false,
+		},
+	    {
+
+			"Evaluated true && false operation (for issue #8)",
+			"true == true && false == true",
+			false,
+		},
+        {
+
+			"Parenthesis boolean",
+			"10 < 50 && (1 != 2 && 1 > 0)",
+			true,
+		},
+		{
+
+			"Comparison of string constants",
+			"'foo' == 'foo'",
+			true,
+		},
+        {
+
+			"NEQ comparison of string constants",
+			"'foo' != 'bar'",
+			true,
+		},
+
+        // Avance calculate
+        {
+
+			"Multiplicative/additive order",
+			"5 + 10 * 2",
+			float(25),
+		},
+        {
+
+			"Multiple constant multiplications",
+			"10 * 10 * 10",
+			float(1000),
+		},
+        {
+
+			"Multiple adds/multiplications",
+			"10 * 10 * 10 + 1 * 10 * 10",
+			float(1100),
+		},
+        // TODO: Same priority
+        // RecordStage solve this problem
+		// {
+
+		// 	"Modulus precedence", left -> right calculate
+		// 	"1 + 101 % 2 * 5",
+		// 	float(6),
 		// },
+		{
+
+			"Exponent precedence",
+			"1 + 5 ** 3 % 2 * 5",
+			float(6),
+		},
 
     };
 

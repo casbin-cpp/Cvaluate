@@ -56,7 +56,7 @@ namespace Cvaluate {
     PrecedencePlanner planAdditive(kAdditiveSymbols, {TokenKind::MODIFIER}, planMultiplicative, nullptr);
     PrecedencePlanner planShift(kBitwiseShiftSymbols, {TokenKind::MODIFIER}, planAdditive, nullptr);
     PrecedencePlanner planBitwise(kBitwiseSymbols, {TokenKind::MODIFIER}, planShift, nullptr);
-    PrecedencePlanner planComparator(kComparatorSymbols, {TokenKind::MODIFIER}, planBitwise, nullptr);
+    PrecedencePlanner planComparator(kComparatorSymbols, {TokenKind::COMPARATOR}, planBitwise, nullptr);
     PrecedencePlanner planLogicalAnd({{"&&", OperatorSymbol::AND}}, {TokenKind::LOGICALOP}, planComparator, nullptr);
     PrecedencePlanner planLogicalOr({{"||", OperatorSymbol::OR}}, {TokenKind::LOGICALOP}, planLogicalAnd, nullptr);
     PrecedencePlanner planTernary(kTernarySymbols, {TokenKind::TERNARY}, planLogicalOr, nullptr);
@@ -131,7 +131,6 @@ namespace Cvaluate {
                 if (valid_symbols.find(token_string) == valid_symbols.end()) {
                     break;
                 } else {
-                    // TODO 
                     symbol = valid_symbols[token_string];
                 }
             }

@@ -24,8 +24,12 @@ namespace Cvaluate {
     using ExpressionFunction = std::function<bool(void*)>;
     using ExpressionFunctionMap = std::unordered_map<std::string, ExpressionFunction>;
 
-    using TokenAvaiableValue = std::variant<int, bool, float, 
-            std::string, std::vector<std::string>,
+    using TokenAvaiableValue = std::variant<
+            int,
+            bool,
+            float,
+            std::string, 
+            std::vector<std::string>,
             nlohmann::json,
             ExpressionFunction>;
 

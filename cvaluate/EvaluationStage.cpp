@@ -74,11 +74,35 @@ namespace Cvaluate {
     }
 
     TokenAvaiableValue EqualStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
-        // return left == right;
+        if (IsString(left) && IsString(right)) {
+            return GetTokenValueString(left) == GetTokenValueString(right);
+        }
+
+        if (IsNumeric(left) && IsNumeric(right)) {
+            return GetTokenValueNumeric(left) == GetTokenValueNumeric(right);
+        }
+
+        if (IsBool(left) && IsBool(right)) {
+            return GetTokenValueBool(left) == GetTokenValueBool(right);
+        }
+
+        return false;
     }
 
     TokenAvaiableValue NotEqualStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
-        // return left != right;
+        if (IsString(left) && IsString(right)) {
+            return GetTokenValueString(left) != GetTokenValueString(right);
+        }
+
+        if (IsNumeric(left) && IsNumeric(right)) {
+            return GetTokenValueNumeric(left) != GetTokenValueNumeric(right);
+        }
+
+        if (IsBool(left) && IsBool(right)) {
+            return GetTokenValueBool(left) != GetTokenValueBool(right);
+        }
+
+        return false;
     }
 
     TokenAvaiableValue AndStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
