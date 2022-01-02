@@ -42,7 +42,7 @@ namespace Cvaluate {
     }
 
     TokenAvaiableValue ModulusStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
-        return (int)GetTokenValueNumeric(left) % (int)GetTokenValueNumeric(right);
+        return (float)((int)GetTokenValueNumeric(left) % (int)GetTokenValueNumeric(right));
     }
 
     TokenAvaiableValue GteStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {

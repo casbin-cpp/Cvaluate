@@ -36,7 +36,7 @@ void Assert_Value(Cvaluate::TokenAvaiableValue& expected, Cvaluate::TokenAvaiabl
 
     if (auto expected_value = std::get_if<T>(&(expected))) {
         if (auto actual_value = std::get_if<T>(&(actual))) {
-            ASSERT_EQ(*expected_value, *actual_value) << "Vaule don't equal " << test_case.Name;
+            ASSERT_EQ(*expected_value, *actual_value) << "Vaule don't equal\n test case:" << test_case.Name;
         } else {
             FAIL() << test_case.Name << "\n Value type don't match.";
         }
@@ -62,6 +62,67 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 			"51 + 49",
             (float)100,
 		},
+        {
+
+			"Single MINUS",
+			"100 - 51",
+			(float)49,
+		},
+        {
+
+			"Single MULTIPLY",
+			"5 * 20",
+			(float)100,
+		},
+		{
+
+			"Single DIVIDE",
+			"100 / 20",
+			(float)5,
+		},
+		{
+
+			"Single even MODULUS",
+			"100 % 2",
+			(float)0,
+		},
+        {
+
+			"Single odd MODULUS",
+			"101 % 2",
+			(float)1,
+		},
+        {
+
+			"Single EXPONENT",
+			"10 ** 2",
+			float(100),
+		},
+        {
+
+			"Compound PLUS",
+			"20 + 30 + 50",
+			float(100),
+		},
+        {
+
+			"Mutiple operators",
+			"20 * 5 - 49",
+			float(51),
+		},
+        {
+
+			"Parenthesis usage",
+			"100 - (5 * 10)",
+		    float(50),
+		},
+        // {
+
+		// 	"Logical OR operation of two clauses",
+		// 	"(1 == 1) || (true == true)",
+		// 	true,
+		// },
+
     };
 
     RunEvaluationTests(token_evaluation_tests);
