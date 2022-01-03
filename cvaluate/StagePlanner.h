@@ -61,6 +61,7 @@ namespace Cvaluate {
                     );
                 };
 
+                // left precence > current, right precence >= current
                 if (this->next_right != nullptr) {
                     nextRight = this->next_right;
                 } else {

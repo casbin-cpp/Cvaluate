@@ -18,7 +18,7 @@
 
 namespace Cvaluate {
     TokenAvaiableValue AddStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
-        if (IsString(left) && IsString(right)) {
+        if (IsString(left) || IsString(right)) {
             return GetTokenValueString(left) + GetTokenValueString(right);
         }
         

@@ -43,6 +43,16 @@ namespace Cvaluate {
     std::string GetTokenValueString(TokenAvaiableValue token_value) {
         if (auto value = std::get_if<std::string>(&token_value)) {
             return *value;
+        } else if (auto value = std::get_if<int>(&token_value)) {
+            return std::to_string(*value);
+        } else if (auto value = std::get_if<float>(&token_value)) {
+            return std::to_string(*value);
+        } else if (auto value = std::get_if<bool>(&token_value)) {
+            if (*value) {
+                return "true";
+            } else {
+                return "false";
+            }
         } else {
             throw CvaluateException("Can't get string from current token");
         }
