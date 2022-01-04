@@ -22,11 +22,11 @@
 #include <OperatorSymbol.h>
 
 namespace Cvaluate {
-    using Parameters = std::unordered_map<std::string, TokenAvaiableValue>;
+    using Parameters = std::unordered_map<std::string, TokenAvaiableData>;
     // Parameters kEmptyParameters;
-    using EvaluationOperator = std::function<TokenAvaiableValue(TokenAvaiableValue, TokenAvaiableValue, Parameters)>;
-    using StageTypeCheck = std::function<bool(TokenAvaiableValue)>;
-    using StageCombinedTypeCheck = std::function<bool(TokenAvaiableValue, TokenAvaiableValue)>;
+    using EvaluationOperator = std::function<TokenAvaiableData(TokenAvaiableData, TokenAvaiableData, Parameters)>;
+    using StageTypeCheck = std::function<bool(TokenAvaiableData)>;
+    using StageCombinedTypeCheck = std::function<bool(TokenAvaiableData, TokenAvaiableData)>;
 
     class EvaluationStage {
         public:
@@ -53,50 +53,51 @@ namespace Cvaluate {
             bool IsShortCircuitable();
     };
 
-    bool IsString(TokenAvaiableValue value);
-    bool IsBool(TokenAvaiableValue value);
-    bool IsNumeric(TokenAvaiableValue value);
-    bool IsFloat(TokenAvaiableValue value);
-    bool IsInt(TokenAvaiableValue value);
-    bool IsArray(TokenAvaiableValue value);
-    bool IsRegexOrString(TokenAvaiableValue value);
-    bool AdditionTypeCheck(TokenAvaiableValue left, TokenAvaiableValue right);
-    bool ComparatorTypeCheck(TokenAvaiableValue left, TokenAvaiableValue right);
+    bool IsString(TokenAvaiableData value);
+    bool IsBool(TokenAvaiableData value);
+    bool IsNumeric(TokenAvaiableData value);
+    bool IsFloat(TokenAvaiableData value);
+    bool IsInt(TokenAvaiableData value);
+    bool IsArray(TokenAvaiableData value);
+    bool IsRegexOrString(TokenAvaiableData value);
+    bool AdditionTypeCheck(TokenAvaiableData left, TokenAvaiableData right);
+    bool ComparatorTypeCheck(TokenAvaiableData left, TokenAvaiableData right);
 
     // Operator type
-    TokenAvaiableValue AddStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue SubtractStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue MultiplyStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue DivideStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue ExponentStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue ModulusStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue GteStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue GtStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue LteStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue LtStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue EqualStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue NotEqualStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue AndStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue OrStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue NegateStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue InvertStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue BitwiseNotStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue TernaryIfStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue TernaryElseStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue RegexStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue NotRegexStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue BitwiseOrStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue BitwiseAndStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue BitwiseXORStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue LeftShiftStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
-    TokenAvaiableValue RightShiftStage(TokenAvaiableValue, TokenAvaiableValue, Parameters = {});
+    TokenAvaiableData AddStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData SubtractStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData MultiplyStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData DivideStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData ExponentStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData ModulusStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData GteStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData GtStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData LteStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData LtStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData EqualStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData NotEqualStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData AndStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData OrStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData NegateStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData InvertStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData BitwiseNotStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData TernaryIfStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData TernaryElseStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData RegexStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData NotRegexStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData BitwiseOrStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData BitwiseAndStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData BitwiseXORStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData LeftShiftStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
+    TokenAvaiableData RightShiftStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});
 
-    TokenAvaiableValue NoopStageRight(TokenAvaiableValue, TokenAvaiableValue, Parameters);
-    TokenAvaiableValue InStage(TokenAvaiableValue, TokenAvaiableValue, Parameters);
-    TokenAvaiableValue SeparatorStage(TokenAvaiableValue, TokenAvaiableValue, Parameters);
+    TokenAvaiableData NoopStageRight(TokenAvaiableData, TokenAvaiableData, Parameters);
+    TokenAvaiableData InStage(TokenAvaiableData, TokenAvaiableData, Parameters);
+    TokenAvaiableData SeparatorStage(TokenAvaiableData, TokenAvaiableData, Parameters);
 
     EvaluationOperator MakeParameterStage(std::string parameter_name);
-    EvaluationOperator MakeLiteralStage(TokenAvaiableValue);
+    EvaluationOperator MakeLiteralStage(TokenAvaiableData);
+    EvaluationOperator MakeFunctionStage(ExpressionFunction);
 } // Cvaluate
 
 

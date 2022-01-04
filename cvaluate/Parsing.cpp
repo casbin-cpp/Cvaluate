@@ -74,7 +74,7 @@ namespace Cvaluate {
                         auto token_value_int = std::stoi(token_string, nullptr, 16);
                         
                         kind = TokenKind::NUMERIC;
-                        token_value = token_value_int;
+                        token_value = (token_value_int);
                         break;
                     } else {
                         stream.unget();

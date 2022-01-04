@@ -40,15 +40,15 @@ namespace Cvaluate {
         return false;
     }
 
-    std::string GetTokenValueString(TokenAvaiableValue token_value) {
-        if (auto value = std::get_if<std::string>(&token_value)) {
-            return *value;
-        } else if (auto value = std::get_if<int>(&token_value)) {
-            return std::to_string(*value);
-        } else if (auto value = std::get_if<float>(&token_value)) {
-            return std::to_string(*value);
-        } else if (auto value = std::get_if<bool>(&token_value)) {
-            if (*value) {
+    std::string GetTokenValueString(TokenAvaiableData token_data) {
+        if (token_data.is_string()) {
+            return token_data.get<std::string>();
+        } else if (token_data.is_number_integer()) {
+            return std::to_string(token_data.get<int>());
+        } else if (token_data.is_number_float()) {
+            return std::to_string(token_data.get<float>());
+        } else if (token_data.is_boolean()) {
+            if (token_data.get<bool>()) {
                 return "true";
             } else {
                 return "false";
@@ -58,38 +58,71 @@ namespace Cvaluate {
         }
     }
 
-    int GetTokenValueInt(TokenAvaiableValue token_value) {
-        if (auto value = std::get_if<int>(&token_value)) {
-            return *value;
+    std::string GetTokenValueString(TokenAvaiableValue token_value) {
+        auto token_data = GetTokenValueData(token_value);
+        if (token_data.is_string()) {
+            return token_data.get<std::string>();
+        } else {
+            throw CvaluateException("Can't get string from current token");
+        }
+    }
+
+    int GetTokenValueInt(TokenAvaiableData token_data) {
+        if (token_data.is_number_integer()) {
+            return token_data.get<int>();
         } else {
             throw CvaluateException("Can't get int from current token");
         }
     }
 
-    float GetTokenValueFloat(TokenAvaiableValue token_value) {
-        if (auto value = std::get_if<float>(&token_value)) {
-            return *value;
+    float GetTokenValueFloat(TokenAvaiableData token_data) {
+        if (token_data.is_number_float()) {
+            return token_data.get<float>();
         } else {
             throw CvaluateException("Can't get float from current token");
         }
     }
 
 
-    float GetTokenValueNumeric(TokenAvaiableValue token_value) {
-        if (auto value = std::get_if<int>(&token_value)) {
-            return *value;
-        } else if (auto value = std::get_if<float>(&token_value)) {
-            return *value;
+    float GetTokenValueNumeric(TokenAvaiableData token_data) {
+        if (token_data.is_number_float()) {
+            return token_data.get<float>();
+        } else if (token_data.is_number_integer()) {
+            return token_data.get<int>();
         } else {
             throw CvaluateException("Can't get float from current token");
         }
     }
 
-    bool GetTokenValueBool(TokenAvaiableValue token_value) {
-        if (auto value = std::get_if<bool>(&token_value)) {
-            return *value;
+    bool GetTokenValueBool(TokenAvaiableData token_data) {
+        if (token_data.is_boolean()) {
+            token_data.get<bool>();
         } else {
             throw CvaluateException("Can't get bool from current token");
+        }
+    }
+
+    TokenAvaiableData GetTokenValueJson(TokenAvaiableData token_data) {
+        if (token_data.is_object()) {
+            return token_data.get<TokenAvaiableData>();
+        } else {
+            throw CvaluateException("Can't get bool from current token");
+        }
+    }
+
+    TokenAvaiableData GetTokenValueData(TokenAvaiableValue token_value) {
+        if (auto data = std::get_if<nlohmann::json>(&token_value)) {
+            return *data;
+        } else {
+            throw CvaluateException("Can't get TokenAvaiableData from current token");
+        }
+    }
+
+    ExpressionFunction GetTokenValueFunction(TokenAvaiableValue token_value) {
+        if (auto data = std::get_if<ExpressionFunction>(&token_value)) {
+            return *data;
+        } else {
+            throw CvaluateException("Can't get TokenAvaiableData from current token");
         }
     }
 } // Cvaluate

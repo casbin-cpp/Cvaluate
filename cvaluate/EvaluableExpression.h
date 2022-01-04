@@ -29,7 +29,7 @@ class EvaluableExpression {
         std::vector<ExpressionToken> e_tokens;
         std::shared_ptr<EvaluationStage> e_evaluation_stage;
 
-        TokenAvaiableValue EvaluateStage(std::shared_ptr<EvaluationStage>, Parameters);
+        TokenAvaiableData EvaluateStage(std::shared_ptr<EvaluationStage>, Parameters);
     public:
         /**
          * Default constructor.
@@ -44,7 +44,7 @@ class EvaluableExpression {
          */
         std::vector<ExpressionToken> Tokens();
 
-        TokenAvaiableValue Evaluate(Parameters);
+        TokenAvaiableData Evaluate(Parameters);
 };
 
 }

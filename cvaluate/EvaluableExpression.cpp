@@ -30,15 +30,15 @@ std::vector<ExpressionToken> EvaluableExpression::Tokens() {
     return this->e_tokens;
 }
 
-TokenAvaiableValue EvaluableExpression::Evaluate(Parameters params) {
+TokenAvaiableData EvaluableExpression::Evaluate(Parameters params) {
 
     this->e_evaluation_stage = PlanStages(this->e_tokens);
 
     return EvaluateStage(this->e_evaluation_stage, params);
 }
 
-TokenAvaiableValue EvaluableExpression::EvaluateStage(std::shared_ptr<EvaluationStage> stage, Parameters params) {
-    TokenAvaiableValue left, right;
+TokenAvaiableData EvaluableExpression::EvaluateStage(std::shared_ptr<EvaluationStage> stage, Parameters params) {
+    TokenAvaiableData left, right;
     if (stage == nullptr) {
         // ;
     }

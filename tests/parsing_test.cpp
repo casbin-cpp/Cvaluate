@@ -63,19 +63,11 @@ void RunTokenParsingTest(std::vector<TokenParsingTest>& token_parsing_tests) {
 
             // Token kind
             ASSERT_EQ(actual_token.Kind, expected_token.Kind)
-                << test_case.Name << "\nType don't match!";;
+                << test_case.Name << "\nType don't match!";
             
             // Token value
-            // int
-            Assert_Token<int>(actual_token, expected_token, test_case);
-            // boolen
-            Assert_Token<bool>(actual_token, expected_token, test_case);
-            // float
-            Assert_Token<float>(actual_token, expected_token, test_case);
-            // string
-            Assert_Token<std::string>(actual_token, expected_token, test_case);
-            // string vector
-            Assert_Token<std::vector<std::string>>(actual_token, expected_token, test_case);
+            // TokenAvaiableData
+            Assert_Token<Cvaluate::TokenAvaiableData>(actual_token, expected_token, test_case);
         }
     }
 }

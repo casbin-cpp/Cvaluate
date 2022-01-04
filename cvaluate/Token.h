@@ -20,17 +20,13 @@
 #include <nlohmann/json.hpp>
 
 namespace Cvaluate {
+    using TokenAvaiableData = nlohmann::json;
 
-    using ExpressionFunction = std::function<bool(void*)>;
+    using ExpressionFunction = std::function<TokenAvaiableData(TokenAvaiableData)>;
     using ExpressionFunctionMap = std::unordered_map<std::string, ExpressionFunction>;
-
+    
     using TokenAvaiableValue = std::variant<
-            int,
-            bool,
-            float,
-            std::string, 
-            std::vector<std::string>,
-            nlohmann::json,
+            TokenAvaiableData,
             ExpressionFunction>;
 
     enum class TokenKind {
@@ -364,11 +360,16 @@ namespace Cvaluate {
         }
     };
 
+    std::string GetTokenValueString(TokenAvaiableData);
     std::string GetTokenValueString(TokenAvaiableValue);
-    int GetTokenValueInt(TokenAvaiableValue);
-    float GetTokenValueFloat(TokenAvaiableValue);
-    float GetTokenValueNumeric(TokenAvaiableValue);
-    bool GetTokenValueBool(TokenAvaiableValue);
+    int GetTokenValueInt(TokenAvaiableData);
+    float GetTokenValueFloat(TokenAvaiableData);
+    float GetTokenValueNumeric(TokenAvaiableData);
+    bool GetTokenValueBool(TokenAvaiableData);
+    nlohmann::json GetTokenValueJson(TokenAvaiableValue);
+    TokenAvaiableData GetTokenValueData(TokenAvaiableValue);
+    ExpressionFunction GetTokenValueFunction(TokenAvaiableValue);
+    
 } // Cvaluate
 
 #endif

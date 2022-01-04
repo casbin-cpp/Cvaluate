@@ -15,9 +15,10 @@
 */
 #include <EvaluationStage.h>
 #include <Exception.h>
+#include <nlohmann/json.hpp>
 
 namespace Cvaluate {
-    TokenAvaiableValue AddStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData AddStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) || IsString(right)) {
             return GetTokenValueString(left) + GetTokenValueString(right);
         }
@@ -25,55 +26,55 @@ namespace Cvaluate {
         return GetTokenValueNumeric(left) + GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue SubtractStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData SubtractStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return GetTokenValueNumeric(left) - GetTokenValueNumeric(right); 
     }
 
-    TokenAvaiableValue MultiplyStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData MultiplyStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return GetTokenValueNumeric(left) * GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue DivideStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData DivideStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return GetTokenValueNumeric(left) / GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue ExponentStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData ExponentStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return (float)pow(GetTokenValueNumeric(left), GetTokenValueNumeric(right));
     }
 
-    TokenAvaiableValue ModulusStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData ModulusStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return (float)((int)GetTokenValueNumeric(left) % (int)GetTokenValueNumeric(right));
     }
 
-    TokenAvaiableValue GteStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData GteStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) && IsString(right)) {
             return GetTokenValueString(left) >= GetTokenValueString(right);
         }
         return GetTokenValueNumeric(left) >= GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue GtStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData GtStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) && IsString(right)) {
             return GetTokenValueString(left) > GetTokenValueString(right);
         }
         return GetTokenValueNumeric(left) > GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue LteStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData LteStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) && IsString(right)) {
             return GetTokenValueString(left) <= GetTokenValueString(right);
         }
         return GetTokenValueNumeric(left) <= GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue LtStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData LtStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) && IsString(right)) {
             return GetTokenValueString(left) < GetTokenValueString(right);
         }
         return GetTokenValueNumeric(left) < GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue EqualStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData EqualStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) && IsString(right)) {
             return GetTokenValueString(left) == GetTokenValueString(right);
         }
@@ -89,7 +90,7 @@ namespace Cvaluate {
         return false;
     }
 
-    TokenAvaiableValue NotEqualStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData NotEqualStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         if (IsString(left) && IsString(right)) {
             return GetTokenValueString(left) != GetTokenValueString(right);
         }
@@ -105,79 +106,88 @@ namespace Cvaluate {
         return false;
     }
 
-    TokenAvaiableValue AndStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData AndStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return GetTokenValueBool(left) && GetTokenValueBool(right);
     }
 
-    TokenAvaiableValue OrStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData OrStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return GetTokenValueBool(left) || GetTokenValueBool(right);
     }
 
-    TokenAvaiableValue NegateStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData NegateStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return -GetTokenValueNumeric(right);
     }
 
-    TokenAvaiableValue InvertStage(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData InvertStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return !GetTokenValueBool(right);
     }
 
-    TokenAvaiableValue BitwiseNotStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData BitwiseNotStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("BitwiseNotStage Not Implement");
     }
 
-    TokenAvaiableValue TernaryIfStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData TernaryIfStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("TernaryIfStage Not Implement");
     }
 
-    TokenAvaiableValue TernaryElseStage(TokenAvaiableValue, TokenAvaiableValue, Parameters)  {
+    TokenAvaiableData TernaryElseStage(TokenAvaiableData, TokenAvaiableData, Parameters)  {
         // throw CvaluateException("TernaryElseStage Not Implement");
     }
 
-    TokenAvaiableValue RegexStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData RegexStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("RegexStage Not Implement");
     }
 
-    TokenAvaiableValue NotRegexStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData NotRegexStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("NotRegexStage Not Implement");
     }
 
-    TokenAvaiableValue BitwiseOrStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData BitwiseOrStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("BitwiseOrStage Not Implement");
     }
 
-    TokenAvaiableValue BitwiseAndStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData BitwiseAndStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("BitwiseAndStage Not Implement");
     }
 
-    TokenAvaiableValue BitwiseXORStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData BitwiseXORStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("BitwiseXORStage Not Implement");
     }
 
-    TokenAvaiableValue LeftShiftStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData LeftShiftStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("LeftShiftStage Not Implement");
     }
-    TokenAvaiableValue RightShiftStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData RightShiftStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("RightShiftStage Not Implement");
     }
 
-    TokenAvaiableValue NoopStageRight(TokenAvaiableValue left, TokenAvaiableValue right, Parameters) {
+    TokenAvaiableData NoopStageRight(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
         return right;
     }
     
-    TokenAvaiableValue InStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
+    TokenAvaiableData InStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
         // throw CvaluateException("InStage Not Implement");
     }
 
-    TokenAvaiableValue SeparatorStage(TokenAvaiableValue, TokenAvaiableValue, Parameters) {
-        // throw CvaluateException("SeparatorStage Not Implement");
+    TokenAvaiableData SeparatorStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
+        TokenAvaiableData ans;
+        if (left.is_object()) {
+            ans = left;
+            ans.push_back(right);
+        } else {
+            ans.push_back(left);
+            ans.push_back(right);
+        }
+
+        return ans;
     }
 
     EvaluationOperator MakeParameterStage(std::string parameter_name) {
         // throw CvaluateException("MakeParameterStage Not Implement");
     }
 
-    EvaluationOperator MakeLiteralStage(TokenAvaiableValue value) {
-        auto func = [] (TokenAvaiableValue value, TokenAvaiableValue, Parameters) -> TokenAvaiableValue {
+    EvaluationOperator MakeLiteralStage(TokenAvaiableData value) {
+        auto func = [] (TokenAvaiableData value, TokenAvaiableData, Parameters) -> TokenAvaiableData {
             return value;
         };
 
@@ -186,52 +196,41 @@ namespace Cvaluate {
         return ret;
     }
 
-    bool IsString(TokenAvaiableValue value) {
-        if (auto v = std::get_if<std::string>(&(value))) {
-            return true;
-        }
-        return false;
+    EvaluationOperator MakeFunctionStage(ExpressionFunction function) {
+        auto func = [] (TokenAvaiableData, TokenAvaiableData right, Parameters, ExpressionFunction function) -> TokenAvaiableData {
+            return function(right);
+        };
+
+        auto ret = std::bind(func, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, function);
+
+        return ret;
     }
 
-    bool IsBool(TokenAvaiableValue value) {
-        if (auto v = std::get_if<bool>(&(value))) {
-            return true;
-        }
-        return false;
+    bool IsString(TokenAvaiableData value) {
+        return value.is_string();
     }
 
-    bool IsNumeric(TokenAvaiableValue value) {
-        if (auto v = std::get_if<int>(&(value))) {
-            return true;
-        }
-        if (auto v = std::get_if<float>(&(value))) {
-            return true;
-        }
-        return false;
+    bool IsBool(TokenAvaiableData value) {
+        return value.is_boolean();
     }
 
-    bool IsFloat(TokenAvaiableValue value) {
-        if (auto v = std::get_if<float>(&(value))) {
-            return true;
-        }
-        return false;
+    bool IsNumeric(TokenAvaiableData value) {
+        return IsFloat(value) || IsInt(value);
     }
 
-    bool IsInt(TokenAvaiableValue value) {
-        if (auto v = std::get_if<int>(&(value))) {
-            return true;
-        }
-        return false;
+    bool IsFloat(TokenAvaiableData value) {
+        return value.is_number_float();
     }
 
-    bool IsArray(TokenAvaiableValue value) {
-        if (auto v = std::get_if<std::vector<std::string>>(&(value))) {
-            return true;
-        }
-        return false;
+    bool IsInt(TokenAvaiableData value) {
+        return value.is_number_integer();
     }
 
-    bool AdditionTypeCheck(TokenAvaiableValue left, TokenAvaiableValue right) {
+    bool IsArray(TokenAvaiableData value) {
+        return value.is_object();
+    }
+
+    bool AdditionTypeCheck(TokenAvaiableData left, TokenAvaiableData right) {
         if (IsNumeric(left) && IsNumeric(right)) {
             return true;
         }
@@ -243,7 +242,7 @@ namespace Cvaluate {
         return true;
     }
 
-    bool ComparatorTypeCheck(TokenAvaiableValue left, TokenAvaiableValue right) {
+    bool ComparatorTypeCheck(TokenAvaiableData left, TokenAvaiableData right) {
         if (IsNumeric(left) && IsNumeric(right)) {
             return true;
         }
@@ -256,7 +255,7 @@ namespace Cvaluate {
     }
 
 
-    bool IsRegexOrString(TokenAvaiableValue value) {
+    bool IsRegexOrString(TokenAvaiableData value) {
         return IsString(value);
     }
 } // Cvaluate

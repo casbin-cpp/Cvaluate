@@ -122,11 +122,12 @@ namespace Cvaluate {
             }
 
             if (!valid_symbols.empty()) {
-                if (!IsString(token.Value)) {
+                auto data = GetTokenValueData(token.Value);
+                if (!IsString(data)) {
                     break;
                 }
 
-                auto token_string = *std::get_if<std::string>(&(token.Value));
+                auto token_string = data.get<std::string>();
 
                 if (valid_symbols.find(token_string) == valid_symbols.end()) {
                     break;
@@ -196,7 +197,7 @@ namespace Cvaluate {
             case TokenKind::PATTERN:
             case TokenKind::BOOLEAN: {
                 symbol = OperatorSymbol::LITERAL;
-                plan_operator = MakeLiteralStage(token->Value);
+                plan_operator = MakeLiteralStage(GetTokenValueData(token->Value));
                 break;
             }
 
@@ -212,7 +213,15 @@ namespace Cvaluate {
             throw CvaluateException("Unable to plan token");
         }
 
-        auto ret = std::make_shared<EvaluationStage>(symbol, nullptr, nullptr, plan_operator, nullptr, nullptr, nullptr);
+        auto ret = std::make_shared<EvaluationStage>(
+            symbol,
+            nullptr,
+            nullptr,
+            plan_operator,
+            nullptr,
+            nullptr,
+            nullptr
+        );
 
         return ret;
     }
@@ -225,7 +234,19 @@ namespace Cvaluate {
             return PlanAccessor(stream);
         }
 
-        // throw CvaluateException("PlanFunctions Not Implement");
+        auto right_stage = PlanAccessor(stream);
+
+        auto ret = std::make_shared<EvaluationStage>(
+            OperatorSymbol::FUNCTIONAL,
+            nullptr,
+            right_stage,
+            MakeFunctionStage(GetTokenValueFunction(token->Value)),
+            nullptr,
+            nullptr,
+            nullptr
+        );
+
+        return ret;
     }
 
     std::shared_ptr<EvaluationStage> PlanAccessor(TokenStream& stream) {

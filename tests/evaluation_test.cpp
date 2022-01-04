@@ -25,22 +25,16 @@ struct TokenEvaluationTest {
 	std::string Name;     
 	std::string Input;
     Cvaluate::ExpressionFunctionMap Functions;
-    Cvaluate::TokenAvaiableValue Expected;
+    Cvaluate::TokenAvaiableData Expected;
     TokenEvaluationTest(std::string name, std::string input, 
-        Cvaluate::TokenAvaiableValue expected, Cvaluate::ExpressionFunctionMap functions = {}) :
+        Cvaluate::TokenAvaiableData expected, Cvaluate::ExpressionFunctionMap functions = {}) :
         Name(name), Input(input), Expected(expected), Functions(functions) {};
 };
 
-template<typename T>
-void Assert_Value(Cvaluate::TokenAvaiableValue& expected, Cvaluate::TokenAvaiableValue& actual, TokenEvaluationTest& test_case) {
+void Assert_Value(Cvaluate::TokenAvaiableData& expected, Cvaluate::TokenAvaiableData& actual, TokenEvaluationTest& test_case) {
+    
+    ASSERT_EQ(expected, actual) << "Vaule don't equal\n test case: " << test_case.Name;
 
-    if (auto expected_value = std::get_if<T>(&(expected))) {
-        if (auto actual_value = std::get_if<T>(&(actual))) {
-            ASSERT_EQ(*expected_value, *actual_value) << "Vaule don't equal\n test case:" << test_case.Name;
-        } else {
-            FAIL() << test_case.Name << "\n Value type don't match.";
-        }
-    }
 }
 
 void RunEvaluationTests(std::vector<TokenEvaluationTest>& token_evaluation_tests) {
@@ -49,9 +43,7 @@ void RunEvaluationTests(std::vector<TokenEvaluationTest>& token_evaluation_tests
 
         auto result = expression.Evaluate({});
 
-        Assert_Value<int>(test_case.Expected, result, test_case);
-        Assert_Value<float>(test_case.Expected, result, test_case);
-        Assert_Value<bool>(test_case.Expected, result, test_case);
+        Assert_Value(test_case.Expected, result, test_case);
     }
 }
 
@@ -507,43 +499,49 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 			"true && true || false && false",
 			true,
 		},
-		// {
+		{
 
-		// 	"Single function",
-		// 	Input: "foo()",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"foo": func(arguments ...interface{}) (interface{}, error) {
-		// 			return true, nil
-		// 		},
-		// 	},
+			"Single function",
+			"foo()",
+            true,
+			{
+				{
+                    "foo",
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        return true;
+                    }
+                }
+			},
+		},
+		{
 
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+		    "Function with argument",
+			"passthrough(1)",
+            float(1.0),
+			{
+				{
+                    "passthrough", 
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        return data;
+                    }
+                }
+			},
+		},
 
-		// 	Name:  "Function with argument",
-		// 	Input: "passthrough(1)",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"passthrough": func(arguments ...interface{}) (interface{}, error) {
-		// 			return arguments[0], nil
-		// 		},
-		// 	},
+		{
 
-		// 	Expected: 1.0,
-		// },
-
-		// EvaluationTest{
-
-		// 	Name:  "Function with arguments",
-		// 	Input: "passthrough(1, 2)",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"passthrough": func(arguments ...interface{}) (interface{}, error) {
-		// 			return arguments[0].(float64) + arguments[1].(float64), nil
-		// 		},
-		// 	},
-
-		// 	Expected: 3.0,
-		// },
+			"Function with arguments",
+			"passthrough(1, 2)",
+            float(3),
+			{
+				{
+                    "passthrough",
+                    [] (Cvaluate::TokenAvaiableData input) -> Cvaluate::TokenAvaiableData {
+                        return input[0].get<int>() + input[1].get<int>();
+                    }
+				},
+			},
+		},
 		// EvaluationTest{
 
 		// 	Name:  "Nested function with precedence",
@@ -561,42 +559,48 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 
 		// 	Expected: 14.0,
 		// },
-		// EvaluationTest{
+		{
 
-		// 	Name:  "Empty function and modifier, compared",
-		// 	Input: "numeric()-1 > 0",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"numeric": func(arguments ...interface{}) (interface{}, error) {
-		// 			return 2.0, nil
-		// 		},
-		// 	},
+			"Empty function and modifier, compared",
+			"numeric()-1 > 0",
+			true,
+			{
+				{
+                    "numeric",
+                    [] (Cvaluate::TokenAvaiableData) -> Cvaluate::TokenAvaiableData {
+                        return 2;
+                    }
+				},
+			},
+		},
+		{
 
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+			"Empty function comparator",
+			"numeric() > 0",
+            true,
+		    {
+				{
+                    "numeric",
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        return 2;
+                    }
+				},
+			},
+		},
+		{
 
-		// 	Name:  "Empty function comparator",
-		// 	Input: "numeric() > 0",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"numeric": func(arguments ...interface{}) (interface{}, error) {
-		// 			return 2.0, nil
-		// 		},
-		// 	},
-
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
-
-		// 	Name:  "Empty function logical operator",
-		// 	Input: "success() && !false",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"success": func(arguments ...interface{}) (interface{}, error) {
-		// 			return true, nil
-		// 		},
-		// 	},
-
-		// 	Expected: true,
-		// },
+			"Empty function logical operator",
+			"success() && !false",
+            true,
+			{
+				{
+                    "success",
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        return true;
+                    }
+				},
+			},
+		},
 		// EvaluationTest{
 
 		// 	Name:  "Empty function ternary",
@@ -621,29 +625,34 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 
 		// 	Expected: 2.0,
 		// },
-		// EvaluationTest{
+		{
 
-		// 	Name:  "Empty function with prefix",
-		// 	Input: "-ten()",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"ten": func(arguments ...interface{}) (interface{}, error) {
-		// 			return 10.0, nil
+			"Empty function with prefix",
+			"-ten()",
+            float(-10),
+			{
+				{
+                    "ten",
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        return float(10);
+                    }
+				},
+			},
+		},
+        // Same Precence Case
+		// {
+
+		//     "Empty function as part of chain",
+		// 	"10 - numeric() - 2",
+        //     float(3),
+		// 	{
+		// 		{
+        //             "numeric",
+        //             [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+        //                 return float(5);
+        //             }
 		// 		},
 		// 	},
-
-		// 	Expected: -10.0,
-		// },
-		// EvaluationTest{
-
-		// 	Name:  "Empty function as part of chain",
-		// 	Input: "10 - numeric() - 2",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"numeric": func(arguments ...interface{}) (interface{}, error) {
-		// 			return 5.0, nil
-		// 		},
-		// 	},
-
-		// 	Expected: 3.0,
 		// },
 		// EvaluationTest{
 
@@ -657,18 +666,20 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 
 		// 	Expected: true,
 		// },
-		// EvaluationTest{
+		{
 
-		// 	Name:  "Enclosed empty function with modifier and comparator (#28)",
-		// 	Input: "(ten() - 1) > 3",
-		// 	Functions: map[string]ExpressionFunction{
-		// 		"ten": func(arguments ...interface{}) (interface{}, error) {
-		// 			return 10.0, nil
-		// 		},
-		// 	},
-
-		// 	Expected: true,
-		// },
+			"Enclosed empty function with modifier and comparator (#28)",
+			"(ten() - 1) > 3",
+            true,
+			{
+				{
+                    "ten",
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        return 10;
+                    }
+				},
+			},
+		},
 		// EvaluationTest{
 
 		// 	Name:  "Ternary/Java EL ambiguity",
