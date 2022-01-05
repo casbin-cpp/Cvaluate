@@ -46,7 +46,7 @@ namespace Cvaluate {
         } else if (token_data.is_number_integer()) {
             return std::to_string(token_data.get<int>());
         } else if (token_data.is_number_float()) {
-            return std::to_string(token_data.get<float>());
+            return std::to_string(int(token_data.get<float>()));
         } else if (token_data.is_boolean()) {
             if (token_data.get<bool>()) {
                 return "true";

@@ -190,7 +190,7 @@ TEST(TestParse, TestConstantParsing) {
             {
                 {
                     Cvaluate::TokenKind::NUMERIC,
-                    1234567890,
+                    float(1234567890),
                 },
             }
         },

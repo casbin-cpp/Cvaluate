@@ -82,12 +82,14 @@ namespace Cvaluate {
                     }
                 }
 
+                // Use float in library.
                 token_string = ReadTokenUntilFalse(stream, IsNumeric);
-                if (token_string.find('.') != std::string::npos) {
-                    token_value = std::stof(token_string);
-                } else {
-                    token_value = std::stoi(token_string);
-                }
+                token_value = std::stof(token_string);
+                // if (token_string.find('.') != std::string::npos) {
+                //     token_value = std::stof(token_string);
+                // } else {
+                //     token_value = std::stoi(token_string);
+                // }
                 
                 kind = TokenKind::NUMERIC;
                 break;

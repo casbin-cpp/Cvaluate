@@ -87,7 +87,7 @@ namespace Cvaluate {
             return GetTokenValueBool(left) == GetTokenValueBool(right);
         }
 
-        return false;
+        return left == right;
     }
 
     TokenAvaiableData NotEqualStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
@@ -103,7 +103,7 @@ namespace Cvaluate {
             return GetTokenValueBool(left) != GetTokenValueBool(right);
         }
 
-        return false;
+        return left != right;
     }
 
     TokenAvaiableData AndStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
@@ -183,7 +183,17 @@ namespace Cvaluate {
     }
 
     EvaluationOperator MakeParameterStage(std::string parameter_name) {
-        // throw CvaluateException("MakeParameterStage Not Implement");
+        auto func = [] (TokenAvaiableData value, TokenAvaiableData, Parameters parameter, std::string name) -> TokenAvaiableData {
+            if(parameter.find(name) == parameter.end()) {
+                 throw CvaluateException("Cant' find varibale name in parameter");
+            } else {
+                return parameter[name];
+            }
+        };
+
+        auto ret = std::bind(func, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, parameter_name);
+
+        return ret;
     }
 
     EvaluationOperator MakeLiteralStage(TokenAvaiableData value) {

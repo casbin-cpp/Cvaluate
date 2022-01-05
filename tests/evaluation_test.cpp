@@ -26,9 +26,14 @@ struct TokenEvaluationTest {
 	std::string Input;
     Cvaluate::ExpressionFunctionMap Functions;
     Cvaluate::TokenAvaiableData Expected;
-    TokenEvaluationTest(std::string name, std::string input, 
-        Cvaluate::TokenAvaiableData expected, Cvaluate::ExpressionFunctionMap functions = {}) :
-        Name(name), Input(input), Expected(expected), Functions(functions) {};
+    Cvaluate::Parameters Parameters;
+    TokenEvaluationTest(
+        std::string name,
+        std::string input,
+        Cvaluate::TokenAvaiableData expected,
+        Cvaluate::ExpressionFunctionMap functions = {},
+        Cvaluate::Parameters parameters = {}
+    ) : Name(name), Input(input), Expected(expected), Functions(functions), Parameters(parameters) {};
 };
 
 void Assert_Value(Cvaluate::TokenAvaiableData& expected, Cvaluate::TokenAvaiableData& actual, TokenEvaluationTest& test_case) {
@@ -41,7 +46,8 @@ void RunEvaluationTests(std::vector<TokenEvaluationTest>& token_evaluation_tests
     for (auto& test_case: token_evaluation_tests) {
         auto expression = Cvaluate::EvaluableExpression(test_case.Input, test_case.Functions);
 
-        auto result = expression.Evaluate({});
+        Cvaluate::Parameters parameters = test_case.Parameters;
+        auto result = expression.Evaluate(parameters);
 
         Assert_Value(test_case.Expected, result, test_case);
     }
@@ -692,6 +698,732 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 		// 	Expected: 1.0,
 		// },
 
+    };
+
+    RunEvaluationTests(token_evaluation_tests);
+}
+
+TEST(TestEvaluation, TestParameterizedEvaluation) {
+    std::vector<TokenEvaluationTest> token_evaluation_tests = {
+        {
+
+			"Single parameter modified by constant",
+			"foo + 2",
+            float(4),
+            {},
+            {
+                {
+                    "foo",
+                    float(2)
+                }
+            }
+		},
+		{
+
+			"Single parameter modified by variable",
+			"foo * bar",
+            float(10),
+            {},
+			{
+
+				{
+					"foo",
+					float(5.0),
+				},
+				{
+					"bar",
+					float(2.0),
+				},
+			},
+		},
+		{
+
+			"Multiple multiplications of the same parameter",
+			"foo * foo * foo",
+            float(1000.0),
+            {},
+			{
+
+				{
+					"foo",
+					float(10.0),
+				},
+			},
+			
+		},
+		{
+
+			"Multiple additions of the same parameter",
+			"foo + foo + foo",
+            float(30.0),
+            {},
+			{
+
+			    {
+					"foo",
+					float(10.0),
+				},
+			},
+		},
+		{
+
+			"Parameter name sensitivity",
+			"foo + FoO + FOO",
+            float(14.0),
+            {},
+			{
+
+				{
+					"foo",
+				    float(8.0),
+				},
+				{
+					"FoO",
+					float(4.0),
+				},
+				{
+					"FOO",
+					float(2.0),
+				},
+			},
+
+		},
+        {
+
+			"Sign prefix comparison against prefixed variable",
+			"-1 < -foo",
+            true,
+            {},
+			{
+
+				{
+					"foo",
+					-8.0,
+				},
+			},
+		},
+		{
+
+			"Fixed-point parameter",
+			"foo > 1",
+            true,
+            {},
+			{
+
+				{
+					"foo",
+					2,
+				},
+			},
+		},
+		{
+
+            "Modifier after closing clause",
+            "(2 + 2) + 2 == 6",
+			true,
+		},
+		{
+
+            "Comparator after closing clause",
+            "(2 + 2) >= 4",
+			true,
+		},
+		{
+
+			"Two-boolean logical operation (for issue #8)",
+			"(foo == true) || (bar == true)",
+            true,
+            {},
+			{
+				{
+					"foo",
+					true,
+				},
+				{
+					"bar",
+					false,
+				},
+			},
+		},
+		{
+
+			"Two-variable integer logical operation (for issue #8)",
+			"foo > 10 && bar > 10",
+            false,
+            {},
+			{
+				{
+					"foo",
+					1,
+				},
+				{
+					"bar",
+					11,
+				},
+			},
+			
+		},
+		// {
+
+		// 	"Regex against right-hand parameter",
+		// 	"'foobar' =~ foo",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			"obar",
+		// 		},
+		// 	},
+		// 	true,
+		// },
+		// {
+
+		// 	"Not-regex against right-hand parameter",
+		// 	"'foobar' !~ foo",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			"baz",
+		// 		},
+		// 	},
+		// 	true,
+		// },
+		// {
+
+		// 	"Regex against two parameters",
+		// 	"foo =~ bar",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			"foobar",
+		// 		},
+		// 		{
+		// 			"bar",
+		// 			"oba",
+		// 		},
+		// 	},
+		// 	true,
+		// },
+		// {
+
+		// 	"Not-regex against two parameters",
+		// 	"foo !~ bar",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			"foobar",
+		// 		},
+		// 		{
+		// 			"bar",
+		// 			"baz",
+		// 		},
+		// 	},
+		// 	true,
+		// },
+		// {
+
+		// 	"Pre-compiled regex",
+		// 	"foo =~ bar",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			"foobar",
+		// 		},
+		// 		{
+		// 			"bar",
+		// 			regexp.MustCompile("[fF][oO]+"),
+		// 		},
+		// 	},
+		// 	true,
+		// },
+		// {
+
+		// 	"Pre-compiled not-regex",
+		// 	"foo !~ bar",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			"foobar",
+		// 		},
+		// 		{
+		// 			"bar",
+		// 			regexp.MustCompile("[fF][oO]+"),
+		// 		},
+		// 	},
+		// 	false,
+		// },
+		// {
+
+		// 	"Single boolean parameter",
+		// 	"commission ? 10",
+		// 	{
+		// 		{
+		// 			"commission",
+		// 			true,
+		// 		},
+		// 	},
+		// 	10.0,
+		// },
+		// {
+
+		// 	"True comparator with a parameter",
+		// 	"partner == 'amazon' ? 10",
+		// 	{
+		// 		{
+		// 			"partner",
+		// 			"amazon",
+		// 		},
+		// 	},
+		// 	10.0,
+		// },
+		// {
+
+		// 	"False comparator with a parameter",
+		// 	"partner == 'amazon' ? 10",
+		// 	{
+		// 		{
+		// 			"partner",
+		// 			"ebay",
+		// 		},
+		// 	},
+		// 	nil,
+		// },
+		// {
+
+		// 	"True comparator with multiple parameters",
+		// 	"theft && period == 24 ? 60",
+		// 	{
+		// 		{
+		// 			"theft",
+		// 			true,
+		// 		},
+		// 		{
+		// 			"period",
+		// 			24,
+		// 		},
+		// 	},
+		// 	60.0,
+		// },
+		// {
+
+		// 	"False comparator with multiple parameters",
+		// 	"theft && period == 24 ? 60",
+		// 	{
+		// 		{
+		// 			"theft",
+		// 			false,
+		// 		},
+		// 		{
+		// 			"period",
+		// 			24,
+		// 		},
+		// 	},
+		// 	nil,
+		// },
+		{
+
+			"String concat with single string parameter",
+			"foo + 'bar'",
+            "bazbar",
+            {},
+			{
+				{
+					"foo",
+					"baz",
+				},
+			},
+			
+		},
+		{
+
+			"String concat with multiple string parameter",
+			"foo + bar",
+            "bazquux",
+            {},
+			{
+				{
+					"foo",
+					"baz",
+				},
+				{
+					"bar",
+					"quux",
+				},
+			},
+			
+		},
+		{
+
+			"String concat with float parameter",
+			"foo + bar",
+            "baz123",
+            {},
+			{
+				{
+					"foo",
+					"baz",
+				},
+				{
+					"bar",
+					int(123),
+				},
+			},
+		},
+		{
+
+			"Mixed multiple string concat",
+			"foo + 123 + 'bar' + true",
+            "baz123bartrue",
+            {},
+			{
+				{
+					"foo",
+					"baz",
+				},
+			},
+		},
+		{
+
+			"Integer width spectrum",
+			"uint8 + uint16 + uint32 + uint64 + int8 + int16 + int32 + int64",
+            float(0.0),
+            {},
+			{
+				{
+					"uint8",
+					(uint8_t)0,
+				},
+				{
+					"uint16",
+					(uint16_t)0,
+				},
+				{
+					"uint32",
+					(uint32_t)0,
+				},
+				{
+					"uint64",
+					(uint64_t)0,
+				},
+				{
+					"int8",
+					0,
+				},
+				{
+					"int16",
+					0,
+				},
+				{
+					"int32",
+					0,
+				},
+				{
+					"int64",
+					0,
+				},
+			},
+		},
+		{
+
+			"Floats",
+			"float32 + float64",
+			float(0.0),
+            {},
+			{
+				{
+					"float32",
+					float(0.0),
+				},
+				{
+					"float64",
+					float(0.0),
+				},
+			},
+		},
+		// {
+
+		// 	"Null coalesce right",
+		// 	"foo ?? 1.0",
+		// 	{
+		// 		{
+		// 			"foo",
+		// 			nil,
+		// 		},
+		// 	},
+		// 	1.0,
+		// },
+		{
+
+			"Multiple comparator/logical operators (#30)",
+			"(foo >= 2887057408 && foo <= 2887122943) || (foo >= 168100864 && foo <= 168118271)",
+			true,
+            {},
+			{
+				{
+					"foo",
+					float(2887057409),
+				},
+			},
+		},
+		{
+
+			"Multiple comparator/logical operators, opposite order (#30)",
+			"(foo >= 168100864 && foo <= 168118271) || (foo >= 2887057408 && foo <= 2887122943)",
+            true,
+            {},
+			{
+				{
+					"foo",
+					float(2887057409),
+				},
+			},
+		},
+		{
+
+			"Multiple comparator/logical operators, small value (#30)",
+			"(foo >= 2887057408 && foo <= 2887122943) || (foo >= 168100864 && foo <= 168118271)",
+            true,
+            {},
+			{
+				{
+					"foo",
+					168100865,
+				},
+			},	
+		},
+		{
+
+			"Multiple comparator/logical operators, small value, opposite order (#30)",
+			"(foo >= 168100864 && foo <= 168118271) || (foo >= 2887057408 && foo <= 2887122943)",
+            true,
+            {},
+			{
+				{
+					"foo",
+					168100865,
+				},
+			},
+		},
+		{
+
+			"Incomparable array equality comparison",
+			"arr == arr",
+            true,
+            {},
+			{
+				{
+					"arr",
+					{0, 0, 0}
+				},
+			},
+		},
+		{
+
+			"Incomparable array not-equality comparison",
+			"arr != arr",
+            false,
+            {},
+			{
+				{
+					"arr",
+					{0, 0, 0},
+				},
+			},
+		},
+		{
+
+			"Mixed function and parameters",
+			"sum(1.2, amount) + name",
+			"2awesome",
+		    {
+                {
+                    "sum",
+                    [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
+                        float ans;
+                        for (auto& x: data) {
+                            if (x.is_number_float()) {
+                                ans += x.get<float>();
+                            }
+                        }
+
+                        return ans;
+                    }
+                }
+            },
+			{
+				{
+					"amount",
+					0.8,
+				},
+				{
+					"name",
+					"awesome",
+				},
+			},
+		},
+		// {
+
+		// 	"Short-circuit OR",
+		// 	"true || fail()",
+		// 	Functions: map[string]ExpressionFunction{
+		// 		"fail": func(arguments ...interface{}) (interface{}, error) {
+		// 			return nil, errors.New("Did not short-circuit")
+		// 		},
+		// 	},
+		// 	true,
+		// },
+		// {
+
+		// 	"Short-circuit AND",
+		// 	"false && fail()",
+		// 	Functions: map[string]ExpressionFunction{
+		// 		"fail": func(arguments ...interface{}) (interface{}, error) {
+		// 			return nil, errors.New("Did not short-circuit")
+		// 		},
+		// 	},
+		// 	false,
+		// },
+		// {
+
+		// 	"Short-circuit ternary",
+		// 	"true ? 1 : fail()",
+		// 	Functions: map[string]ExpressionFunction{
+		// 		"fail": func(arguments ...interface{}) (interface{}, error) {
+		// 			return nil, errors.New("Did not short-circuit")
+		// 		},
+		// 	},
+		// 	1.0,
+		// },
+		// {
+
+		// 	"Short-circuit coalesce",
+		// 	"'foo' ?? fail()",
+		// 	Functions: map[string]ExpressionFunction{
+		// 		"fail": func(arguments ...interface{}) (interface{}, error) {
+		// 			return nil, errors.New("Did not short-circuit")
+		// 		},
+		// 	},
+		// 	"foo",
+		// },
+		// {
+
+		// 	"Simple parameter call",
+		// 	"foo.String",
+		// 	{fooParameter},
+		// 	fooParameter.Value.(dummyParameter).String,
+		// },
+		// {
+
+		// 	"Simple parameter function call",
+		// 	"foo.Func()",
+		// 	{fooParameter},
+		// 	"funk",
+		// },
+		// {
+
+		// 	"Simple parameter call from pointer",
+		// 	"fooptr.String",
+		// 	{fooPtrParameter},
+		// 	fooParameter.Value.(dummyParameter).String,
+		// },
+		// {
+
+		// 	"Simple parameter function call from pointer",
+		// 	"fooptr.Func()",
+		// 	{fooPtrParameter},
+		// 	"funk",
+		// },
+		// {
+
+		// 	"Simple parameter function call from pointer",
+		// 	"fooptr.Func3()",
+		// 	{fooPtrParameter},
+		// 	"fronk",
+		// },
+		// {
+
+		// 	"Simple parameter call",
+		// 	"foo.String == 'hi'",
+		// 	{fooParameter},
+		// 	false,
+		// },
+		// {
+
+		// 	"Simple parameter call with modifier",
+		// 	"foo.String + 'hi'",
+		// 	{fooParameter},
+		// 	fooParameter.Value.(dummyParameter).String + "hi",
+		// },
+		// {
+
+		// 	"Simple parameter function call, two-arg return",
+		// 	"foo.Func2()",
+		// 	{fooParameter},
+		// 	"frink",
+		// },
+		// {
+
+		// 	"Parameter function call with all argument types",
+		// 	"foo.TestArgs(\"hello\", 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1.0, 2.0, true)",
+		// 	{fooParameter},
+		// 	"hello: 33",
+		// },
+
+		// {
+
+		// 	"Simple parameter function call, one arg",
+		// 	"foo.FuncArgStr('boop')",
+		// 	{fooParameter},
+		// 	"boop",
+		// },
+		// {
+
+		// 	"Simple parameter function call, one arg",
+		// 	"foo.FuncArgStr('boop') + 'hi'",
+		// 	{fooParameter},
+		// 	"boophi",
+		// },
+		// {
+
+		// 	"Nested parameter function call",
+		// 	"foo.Nested.Dunk('boop')",
+		// 	{fooParameter},
+		// 	"boopdunk",
+		// },
+		// {
+
+		// 	"Nested parameter call",
+		// 	"foo.Nested.Funk",
+		// 	{fooParameter},
+		// 	"funkalicious",
+		// },
+		// {
+
+		// 	"Parameter call with + modifier",
+		// 	"1 + foo.Int",
+		// 	{fooParameter},
+		// 	102.0,
+		// },
+		// {
+
+		// 	"Parameter string call with + modifier",
+		// 	"'woop' + (foo.String)",
+		// 	{fooParameter},
+		// 	"woopstring!",
+		// },
+		// {
+
+		// 	"Parameter call with && operator",
+		// 	"true && foo.BoolFalse",
+		// 	{fooParameter},
+		// 	false,
+		// },
+		// {
+
+		// 	"Null coalesce nested parameter",
+		// 	"foo.Nil ?? false",
+		// 	{fooParameter},
+		// 	false,
+		// },
     };
 
     RunEvaluationTests(token_evaluation_tests);
