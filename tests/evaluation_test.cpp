@@ -36,6 +36,21 @@ struct TokenEvaluationTest {
     ) : Name(name), Input(input), Expected(expected), Functions(functions), Parameters(parameters) {};
 };
 
+Cvaluate::TokenAvaiableData dummyParameterInstance = {
+        {"String", "string!"},
+        {"Int", 101},
+        {"BoolFalse", false},
+        {"Nested", 
+            {
+                {"Funk", "funkalicious"},
+            }
+        }
+    };
+
+Cvaluate::Parameters fooParameter = {
+	{"foo", dummyParameterInstance}
+};
+
 void Assert_Value(Cvaluate::TokenAvaiableData& expected, Cvaluate::TokenAvaiableData& actual, TokenEvaluationTest& test_case) {
     
     ASSERT_EQ(expected, actual) << "Vaule don't equal\n test case: " << test_case.Name;
@@ -1304,13 +1319,14 @@ TEST(TestEvaluation, TestParameterizedEvaluation) {
 		// 	},
 		// 	"foo",
 		// },
-		// {
+		{
 
-		// 	"Simple parameter call",
-		// 	"foo.String",
-		// 	{fooParameter},
-		// 	fooParameter.Value.(dummyParameter).String,
-		// },
+			"Simple parameter call",
+			"foo.String",
+            fooParameter["foo"]["String"],
+            {},
+			fooParameter,
+		},
 		// {
 
 		// 	"Simple parameter function call",
@@ -1339,20 +1355,22 @@ TEST(TestEvaluation, TestParameterizedEvaluation) {
 		// 	{fooPtrParameter},
 		// 	"fronk",
 		// },
-		// {
+		{
 
-		// 	"Simple parameter call",
-		// 	"foo.String == 'hi'",
-		// 	{fooParameter},
-		// 	false,
-		// },
-		// {
+			"Simple parameter call",
+			"foo.String == 'hi'",
+            false,
+            {},
+			fooParameter,
+		},
+		{
 
-		// 	"Simple parameter call with modifier",
-		// 	"foo.String + 'hi'",
-		// 	{fooParameter},
-		// 	fooParameter.Value.(dummyParameter).String + "hi",
-		// },
+			"Simple parameter call with modifier",
+			"foo.String + 'hi'",
+			fooParameter["foo"]["String"].get<std::string>() + "hi",
+			{},
+            fooParameter,
+		},
 		// {
 
 		// 	"Simple parameter function call, two-arg return",
@@ -1389,34 +1407,38 @@ TEST(TestEvaluation, TestParameterizedEvaluation) {
 		// 	{fooParameter},
 		// 	"boopdunk",
 		// },
-		// {
+		{
 
-		// 	"Nested parameter call",
-		// 	"foo.Nested.Funk",
-		// 	{fooParameter},
-		// 	"funkalicious",
-		// },
-		// {
+			"Nested parameter call",
+			"foo.Nested.Funk",
+            "funkalicious",
+            {},
+			fooParameter,
+		},
+		{
 
-		// 	"Parameter call with + modifier",
-		// 	"1 + foo.Int",
-		// 	{fooParameter},
-		// 	102.0,
-		// },
-		// {
+			"Parameter call with + modifier",
+			"1 + foo.Int",
+            float(102.0),
+            {},
+			fooParameter,
+		},
+		{
 
-		// 	"Parameter string call with + modifier",
-		// 	"'woop' + (foo.String)",
-		// 	{fooParameter},
-		// 	"woopstring!",
-		// },
-		// {
+			"Parameter string call with + modifier",
+			"'woop' + (foo.String)",
+			"woopstring!",
+            {},
+            fooParameter
+		},
+		{
 
-		// 	"Parameter call with && operator",
-		// 	"true && foo.BoolFalse",
-		// 	{fooParameter},
-		// 	false,
-		// },
+			"Parameter call with && operator",
+			"true && foo.BoolFalse",
+            false,
+			{},
+            fooParameter
+		},
 		// {
 
 		// 	"Null coalesce nested parameter",

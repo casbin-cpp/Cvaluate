@@ -98,6 +98,7 @@ namespace Cvaluate {
     EvaluationOperator MakeParameterStage(std::string parameter_name);
     EvaluationOperator MakeLiteralStage(TokenAvaiableData);
     EvaluationOperator MakeFunctionStage(ExpressionFunction);
+    EvaluationOperator MakeAccessorStage(TokenAvaiableData);
 } // Cvaluate
 
 

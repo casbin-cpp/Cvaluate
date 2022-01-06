@@ -185,7 +185,7 @@ namespace Cvaluate {
     EvaluationOperator MakeParameterStage(std::string parameter_name) {
         auto func = [] (TokenAvaiableData value, TokenAvaiableData, Parameters parameter, std::string name) -> TokenAvaiableData {
             if(parameter.find(name) == parameter.end()) {
-                 throw CvaluateException("Cant' find varibale name in parameter");
+                throw CvaluateException("Cant' find varibale name in parameter");
             } else {
                 return parameter[name];
             }
@@ -212,6 +212,35 @@ namespace Cvaluate {
         };
 
         auto ret = std::bind(func, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, function);
+
+        return ret;
+    }
+
+    EvaluationOperator MakeAccessorStage(TokenAvaiableData value) {
+        auto func = [] (TokenAvaiableData, TokenAvaiableData, Parameters parameters, TokenAvaiableData& data) -> TokenAvaiableData {
+            if (data.empty()) {
+                throw CvaluateException("Cant' find varibale name in given strings");
+            }
+
+            std::vector<std::string> name_strings = data;
+            
+            auto variable_name = name_strings[0];
+
+            if (parameters.find(variable_name) == parameters.end()) {
+                throw CvaluateException("Cant' find varibale name in parameters");
+            }
+
+            nlohmann::json j = parameters[variable_name];
+
+            for (int i = 1; i < name_strings.size(); i++) {
+                auto field_name = name_strings[i];
+                j = j[field_name];
+            }
+
+            return j;
+        };
+
+        auto ret = std::bind(func, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, value);
 
         return ret;
     }

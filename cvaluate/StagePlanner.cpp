@@ -258,6 +258,27 @@ namespace Cvaluate {
         }
 
         // throw CvaluateException("PlanAccessor Not Implement");
+        
+        if (stream.HasNext()) {
+            auto otherToken = stream.Next();
+            if (otherToken->Kind == TokenKind::CLAUSE) {
+                throw CvaluateException("Don't support member function.");
+            } else {
+                stream.Rewind();
+            }
+        }
+
+        auto ret = std::make_shared<EvaluationStage>(
+            OperatorSymbol::ACCESS,
+            nullptr,
+            nullptr,
+            MakeAccessorStage(GetTokenValueData(token->Value)),
+            nullptr,
+            nullptr,
+            nullptr
+        );
+
+        return ret;
     }
     /*
         Maps a given [symbol] to a set of typechecks to be used during runtime.
