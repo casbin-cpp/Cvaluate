@@ -16,10 +16,11 @@
 
 #ifndef CVALUATE_EVALUABLE_EXPRESSION
 #define CVALUATE_EVALUABLE_EXPRESSION
-#include <pch.h>
-#include <Token.h>
-#include <Parising.h>
-#include <StagePlanner.h>
+
+#include "./pch.h"
+#include "./Token.h"
+#include "./Parising.h"
+#include "./StagePlanner.h"
 
 namespace Cvaluate {
 

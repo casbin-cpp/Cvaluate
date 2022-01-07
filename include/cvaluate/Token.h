@@ -16,8 +16,10 @@
 
 #ifndef CVALUATE_TOKEN
 #define CVALUATE_TOKEN
-#include <pch.h>
+
 #include <nlohmann/json.hpp>
+
+#include "./pch.h"
 
 namespace Cvaluate {
     using TokenAvaiableData = nlohmann::json;

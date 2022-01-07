@@ -48,7 +48,7 @@ option(CVALUATE_BUILD_TEST "State whether to build test" ON)
 # Intrinsic directory paths
 set(CVALUATE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cvaluate)
 set(CVALUATE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(CVALUATE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cvaluate)
+set(CVALUATE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/cvaluate)
 
 # Do not output install messages.
 if(NOT DEFINED CMAKE_INSTALL_MESSAGE)

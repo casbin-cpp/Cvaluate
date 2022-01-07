@@ -17,7 +17,7 @@
 #ifndef CVALUATE_TOKEN_STREAM
 #define CVALUATE_TOKEN_STREAM
 
-#include <Token.h>
+#include "./Token.h"
 
 namespace Cvaluate {
     class TokenStream {

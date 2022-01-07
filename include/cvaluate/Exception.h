@@ -17,8 +17,9 @@
 #ifndef CVALUATE_EXCEPTION
 #define CVALUATE_EXCEPTION
 
-#include <pch.h>
 #include <exception>
+
+#include "./pch.h"
 
 namespace Cvaluate {
 

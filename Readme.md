@@ -15,14 +15,18 @@ Provides support for evaluating arbitrary C-like artithmetic/string expressions 
     - [x] Parse expression.
     - [ ] Check tokens syntax and  check balance.
     - [x] Test parse tokens.
-- [ ] Build  expression tree by tokens.
+- [x] Build expression tree by tokens.
     - [x] Support baisc numeric add expression `1 + 49`.
-    - [ ] Design  expression tree like [evaluationStage](https://github.com/Knetic/govaluate/blob/master/evaluationStage.go).
+    - [x] Design  expression tree like [evaluationStage](https://github.com/Knetic/govaluate/blob/master/evaluationStage.go).
     - [ ] Test expression tree.
-- [ ] Support basic math expression.
+- [x] Support basic math expression.
+    - [x] Support `+-*/`.
+    - [x] Support compare operator.
+    - [ ] Support bit shift.  
 - [ ] Support variable and accessors.
-    - [ ] Support `Eval(params)`, `params` is a `map` like `name: object` in `gvaluate `.
-    - [ ] Basic data type of `params` is `int ,float, string`.
+    - [x] Support `Eval(params)`, `params` is a `map` like `name: object` in `gvaluate `.
+    - [x] ~~Basic data type of `params` is `int ,float, string`.~~ Use [json](https://github.com/nlohmann/json) as base data type.
+    - [x] Support simple
     - [ ] Object data of `params` should reload `operator[]` and `operator` for `access` and compare. Maybe we can accomplish it by define a base object or use template to support accessors.
 
 - [ ] Add benchmark for Cvaluate.

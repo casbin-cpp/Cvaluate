@@ -13,9 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#include <EvaluationStage.h>
-#include <Exception.h>
-#include <nlohmann/json.hpp>
+#include "./EvaluationStage.h"
+#include "./Exception.h"
 
 namespace Cvaluate {
     TokenAvaiableData AddStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {

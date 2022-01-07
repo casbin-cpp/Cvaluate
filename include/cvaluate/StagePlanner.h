@@ -17,8 +17,8 @@
 #ifndef CVALUATE_STAGE_PLANNER
 #define CVALUATE_STAGE_PLANNER
 
-#include <EvaluationStage.h>
-#include <TokenStream.h>
+#include "./EvaluationStage.h"
+#include "./TokenStream.h"
 
 namespace Cvaluate {
     /*

@@ -17,9 +17,9 @@
 #ifndef EVALUATION_STAGE_SYMBOL
 #define EVALUATION_STAGE_SYMBOL
 
-#include "pch.h"
-#include <Token.h>
-#include <OperatorSymbol.h>
+#include "./pch.h"
+#include "./Token.h"
+#include "./OperatorSymbol.h"
 
 namespace Cvaluate {
     using Parameters = std::unordered_map<std::string, TokenAvaiableData>;

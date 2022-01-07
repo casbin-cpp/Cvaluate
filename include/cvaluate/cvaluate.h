@@ -13,3 +13,9 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+#ifndef CVALUATE_H
+#define CVALUATE_H
+
+#include "./EvaluableExpression.h"
+
+#endif

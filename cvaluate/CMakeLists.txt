@@ -26,11 +26,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(cvaluate STATIC ${CVALUATE_SOURCE_FILES})
 
-# target_precompile_headers(cvaluate PRIVATE pch.h)
-target_include_directories(cvaluate PRIVATE ${CVALUATE_SOURCE_DIR})
+target_precompile_headers(cvaluate PRIVATE ${CVALUATE_INCLUDE_DIR}/pch.h)
+target_include_directories(cvaluate PRIVATE ${CVALUATE_INCLUDE_DIR})
 target_link_libraries(
     cvaluate PRIVATE 
-    # nlohmann_json::nlohmann_json
+    nlohmann_json::nlohmann_json
 )
 
 set_target_properties(cvaluate PROPERTIES 

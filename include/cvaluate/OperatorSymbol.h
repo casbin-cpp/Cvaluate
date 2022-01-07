@@ -16,7 +16,8 @@
 
 #ifndef CVALUATE_OPERATOR_SYMBOL
 #define CVALUATE_OPERATOR_SYMBOL
-#include <pch.h>
+
+#include "./pch.h"
 
 namespace Cvaluate {
     enum class OperatorSymbol {

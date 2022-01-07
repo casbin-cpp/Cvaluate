@@ -16,9 +16,10 @@
 
 #ifndef CVALUATE_PARSING
 #define CVALUATE_PARSING
-#include <pch.h>
-#include <Token.h>
-#include <OperatorSymbol.h>
+
+#include "./pch.h"
+#include "./Token.h"
+#include "./OperatorSymbol.h"
 
 namespace Cvaluate {
     std::vector<ExpressionToken> ParseTokens(std::string& expression, ExpressionFunctionMap& functions);
