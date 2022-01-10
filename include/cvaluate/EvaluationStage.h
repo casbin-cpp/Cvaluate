@@ -48,8 +48,8 @@ namespace Cvaluate {
                 symbol_(symbol), left_stage_(left_stage), right_stage_(right_stage),
                 operator_(Operator), left_type_check_(left_type_check), right_type_check_(right_type_check),
                 type_check_(type_check) {};
-            void SwapWith(EvaluationStage& other);
-            void SetToNonStage(EvaluationStage& other);
+            void SwapWith(std::shared_ptr<EvaluationStage> other);
+            void SetToNonStage(EvaluationStage other);
             bool IsShortCircuitable();
     };
 

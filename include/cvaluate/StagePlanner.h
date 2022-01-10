@@ -90,6 +90,8 @@ namespace Cvaluate {
     std::shared_ptr<EvaluationStage> PlanAccessor(TokenStream& stream);
     std::shared_ptr<EvaluationStage> PlanValue(TokenStream& stream);
     TypeChecks FindTypeChecks(OperatorSymbol);
+
+    void MirrorStageSubtree(std::vector<std::shared_ptr<EvaluationStage>>& stages);
 } //Cvaluate
 
 #endif

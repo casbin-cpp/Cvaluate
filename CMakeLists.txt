@@ -42,7 +42,7 @@ endif()
 
 ###############################################################################
 # Global CMake options.
-
+option(CVALUATE_INSTALL "State whether to install cavaluate" ON)
 option(CVALUATE_BUILD_TEST "State whether to build test" ON)
 
 # Intrinsic directory paths
@@ -76,4 +76,24 @@ add_subdirectory(cvaluate)
 if(CVALUATE_BUILD_TEST)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+if (CVALUATE_INSTALL)
+    message(CHECK_START "[casbin]: Installing casbin ...")
+    export(
+        TARGETS cvaluate
+        NAMESPACE cvaluate::
+        FILE cvaluateConfig.cmake
+    )
+
+    # Installing headers
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cvaluate
+        DESTINATION include
+    )
+    set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
+    export(PACKAGE cvaluate)
+
+    message(CHECK_PASS " The targets can now be imported with find_package(cvaluate)")
+    message(STATUS "[cvaluate]: Build the \"install\" target and add \"${CMAKE_INSTALL_PREFIX}/include\" to you PATH for cvaluate to work")
 endif()
