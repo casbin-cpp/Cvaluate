@@ -20,13 +20,14 @@ set(CMAKE_MODULE_PATH
 )
 
 set(CMAKE_WARN_DEPRECATED ON)
+set(cvaluate_VERSION 0.0.0)
 
 ###############################################################################
 # Project definition.
 
 project(
     cvaluate
-    VERSION 0.0.0
+    VERSION ${cvaluate_VERSION}
     DESCRIPTION "Expression evaluate in C/C++"
     LANGUAGES CXX C
 )
@@ -79,20 +80,50 @@ if(CVALUATE_BUILD_TEST)
 endif()
 
 if (CVALUATE_INSTALL)
-    message(CHECK_START "[casbin]: Installing casbin ...")
-    export(
-        TARGETS cvaluate
-        NAMESPACE cvaluate::
-        FILE cvaluateConfig.cmake
+    message(CHECK_START "[cvaluate]: Installing cvaluate ...")
+
+    # install library
+    install(TARGETS cvaluate EXPORT cvaluateTargets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
     )
 
-    # Installing headers
+    # install header
     install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/cvaluate
         DESTINATION include
     )
-    set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
-    export(PACKAGE cvaluate)
+
+    # for cmake find_package()
+    export(EXPORT cvaluateTargets
+        FILE "${CMAKE_CURRENT_BINARY_DIR}/cvaluate/cvaluateTargets.cmake"
+        NAMESPACE cvaluate::
+    )
+    # dependency
+    configure_file(cmake/cvaluateConfig.cmake
+        "${CMAKE_CURRENT_BINARY_DIR}/cvaluate/cvaluateConfig.cmake"
+        COPYONLY
+    )
+
+    set(ConfigPackageLocation lib/cmake/cvaluate)
+    install(EXPORT cvaluateTargets
+        FILE
+            cvaluateTargets.cmake
+        NAMESPACE
+            cvaluate::
+        DESTINATION
+            ${ConfigPackageLocation}
+    )
+    install(
+        FILES
+            cmake/cvaluateConfig.cmake
+        DESTINATION
+            ${ConfigPackageLocation}
+        COMPONENT
+            Devel
+    )
 
     message(CHECK_PASS " The targets can now be imported with find_package(cvaluate)")
     message(STATUS "[cvaluate]: Build the \"install\" target and add \"${CMAKE_INSTALL_PREFIX}/include\" to you PATH for cvaluate to work")

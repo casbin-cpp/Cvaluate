@@ -31,3 +31,26 @@ Provides support for evaluating arbitrary C-like artithmetic/string expressions 
     - [ ] Object data of `params` should reload `operator[]` and `operator` for `access` and compare. Maybe we can accomplish it by define a base object or use template to support accessors.
 
 - [ ] Add benchmark for Cvaluate.
+
+
+## Install Cvaluate
+
+1. Download this repository `git clone https://github.com/casbin-cpp/Cvaluate`.
+
+2. Make a directory to complie `mkdir build && cd build`.
+
+3. Prepare build file `cmake -DCMAKE_BUILD_TYPE=Release ..`.
+
+4. Build and install `make install`.
+
+## Usage
+
+``` cpp
+void test_cvaluate() {
+    using namespace std;
+    string s = "1 + 2 > 1.3";
+    auto expression = Cvaluate::EvaluableExpression(s);
+
+    cout << expression.Evaluate({}) << endl;    // output true
+}
+```
