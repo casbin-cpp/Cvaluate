@@ -296,4 +296,18 @@ namespace Cvaluate {
     bool IsRegexOrString(TokenAvaiableData value) {
         return IsString(value);
     }
+
+    void EvaluationStage::SwapWith(std::shared_ptr<EvaluationStage> other) {
+        auto temp = *other;
+        other->SetToNonStage(*this);
+        this->SetToNonStage(temp);
+    }
+
+    void EvaluationStage::SetToNonStage(EvaluationStage other) {
+        this->symbol_ = other.symbol_;
+        this->operator_ = other.operator_;
+        this->left_type_check_ = other.left_type_check_;
+        this->right_type_check_ = other.right_type_check_;
+        this->type_check_ = other.type_check_;
+    }
 } // Cvaluate

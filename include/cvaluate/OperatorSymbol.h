@@ -21,7 +21,7 @@
 
 namespace Cvaluate {
     enum class OperatorSymbol {
-        OperatorSymbol,
+        VALUE,
         LITERAL,
         NOOP,
         EQ,
@@ -61,6 +61,25 @@ namespace Cvaluate {
         ACCESS,
         SEPARATE,
     };
+
+    enum class OperatorPrecedence {
+        NoopPrecedence,
+        ValuePrecedence,
+        FunctionalPrecedence,
+        PrefixPrecedence,
+        ExponentialPrecedence,
+        AdditivePrecedence,
+        BitwisePrecedence,
+        BitwiseShiftPrecedence,
+        MultiplicativePrecedence,
+        ComparatorPrecedence,
+        TernaryPrecedence,
+        LogicalAndPrecedence,
+        LogicalOrPrecedence,
+        SeparatePrecedence,
+    };
+
+    OperatorPrecedence FindOperatorPrecedenceForSymbol(OperatorSymbol symbol);
 
     using StringOperatorSymbolMap = std::unordered_map<std::string, OperatorSymbol>;
 

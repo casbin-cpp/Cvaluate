@@ -196,18 +196,18 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 		},
         // TODO: Same priority
         // RecordStage solve this problem
-		// {
+		{
 
-		// 	"Modulus precedence", left -> right calculate
-		// 	"1 + 101 % 2 * 5",
-		// 	float(6),
-		// },
-		// {
+			"Modulus precedence", // left -> right calculate
+			"1 + 101 % 2 * 5",
+			float(6),
+		},
+		{
 
-		// 	"Exponent precedence",
-		// 	"1 + 5 ** 3 % 2 * 5",
-		// 	float(6),
-		// },
+			"Exponent precedence",
+			"1 + 5 ** 3 % 2 * 5",
+			float(6),
+		},
 
         // Bit shift
         // {
@@ -228,16 +228,16 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 		// 	"90 + 50 << 1 * 5",
 		// 	float(4480),
 		// },
-		// {
-		// 	"Order of non-commutative same-precedence operators (additive)",
-		// 	"1 - 2 - 4 - 8",
-		// 	float(-13.0),
-		// },
-		// {
-		// 	"Order of non-commutative same-precedence operators (multiplicative)",
-		// 	"1 * 4 / 2 * 8",
-		// 	float(16.0),
-		// },
+		{
+			"Order of non-commutative same-precedence operators (additive)",
+			"1 - 2 - 4 - 8",
+			float(-13.0),
+		},
+		{
+			"Order of non-commutative same-precedence operators (multiplicative)",
+			"1 * 4 / 2 * 8",
+			float(16.0),
+		},
 
 		// EvaluationTest{
 		// 	Name:     "Null coalesce precedence",
@@ -298,54 +298,54 @@ TEST(TestEvaluation, TestNoParameterEvaluation) {
 		// 	Input:    "'2014-01-02 14:12:22' <= '2014-01-02 11:12:22'",
 		// 	Expected: false,
 		// },
-		// EvaluationTest{
+		{
 
-		// 	Name:     "Sign prefix comparison",
-		// 	Input:    "-1 < 0",
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+			"Sign prefix comparison",
+			"-1 < 0",
+			true,
+		},
+		{
 
-		// 	Name:     "Lexicographic LT",
-		// 	Input:    "'ab' < 'abc'",
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+			"Lexicographic LT",
+			"'ab' < 'abc'",
+			true,
+		},
+		{
 
-		// 	Name:     "Lexicographic LTE",
-		// 	Input:    "'ab' <= 'abc'",
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+			"Lexicographic LTE",
+			"'ab' <= 'abc'",
+		    true,
+		},
+		{
 
-		// 	Name:     "Lexicographic GT",
-		// 	Input:    "'aba' > 'abc'",
-		// 	Expected: false,
-		// },
-		// EvaluationTest{
+			"Lexicographic GT",
+			"'aba' > 'abc'",
+			false,
+		},
+		{
 
-		// 	Name:     "Lexicographic GTE",
-		// 	Input:    "'aba' >= 'abc'",
-		// 	Expected: false,
-		// },
-		// EvaluationTest{
+			"Lexicographic GTE",
+			"'aba' >= 'abc'",
+			false,
+		},
+		{
 
-		// 	Name:     "Boolean sign prefix comparison",
-		// 	Input:    "!true == false",
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+			"Boolean sign prefix comparison",
+			"!true == false",
+			true,
+		},
+		{
 
-		// 	Name:     "Inversion of clause",
-		// 	Input:    "!(10 < 0)",
-		// 	Expected: true,
-		// },
-		// EvaluationTest{
+			"Inversion of clause",
+			"!(10 < 0)",
+			true,
+		},
+		{
 
-		// 	Name:     "Negation after modifier",
-		// 	Input:    "10 * -10",
-		// 	Expected: -100.0,
-		// },
+			"Negation after modifier",
+			"10 * -10",
+			float(-100.0),
+		},
 		// EvaluationTest{
 
 		// 	Name:     "Ternary with single boolean",

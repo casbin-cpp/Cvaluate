@@ -462,24 +462,25 @@ TEST(TestParse, TestConstantParsing) {
 				},
 			},
 		},
-		TokenParsingTest{
-			"Accessor function",
-			"foo.Operation()",
-			{
-				{
-					Cvaluate::TokenKind::ACCESSOR,
-					std::vector<std::string>{"foo", "Operation"},
-				},
-				{
-					Cvaluate::TokenKind::CLAUSE,
-                    std::string("("),
-				},
-				{
-					Cvaluate::TokenKind::CLAUSE_CLOSE,
-                    std::string(")"),
-				},
-			},
-		},
+        // Don't support
+		// TokenParsingTest{
+		// 	"Accessor function",
+		// 	"foo.Operation()",
+		// 	{
+		// 		{
+		// 			Cvaluate::TokenKind::ACCESSOR,
+		// 			std::vector<std::string>{"foo", "Operation"},
+		// 		},
+		// 		{
+		// 			Cvaluate::TokenKind::CLAUSE,
+        //             std::string("("),
+		// 		},
+		// 		{
+		// 			Cvaluate::TokenKind::CLAUSE_CLOSE,
+        //             std::string(")"),
+		// 		},
+		// 	},
+		// },
     };
 
     RunTokenParsingTest(token_parsing_tests);

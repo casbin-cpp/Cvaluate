@@ -72,7 +72,9 @@ namespace Cvaluate {
 
         auto stage = PlanTokens(stream);
 
-        // RecorderStages(std::move(stage));
+        // while we're now fully-planned, we now need to re-order same-precedence operators.
+        // this could probably be avoided with a different planning method
+        RecorderStages(stage);
 
         return stage;
     }
@@ -85,8 +87,45 @@ namespace Cvaluate {
         return planSeparator(stream);
     }
 
+    /*
+        During stage planning, stages of equal precedence are parsed such that they'll be evaluated in reverse order.
+        For commutative operators like "+" or "-", it's no big deal. But for order-specific operators, it ruins the expected result.
+    */
     void RecorderStages(std::shared_ptr<EvaluationStage> root_stage) {
-        throw CvaluateException("RecorderStages not Implement");
+        std::shared_ptr<EvaluationStage> next_stage, current_stage;
+        OperatorPrecedence precedence, current_precedence;
+        std::vector<std::shared_ptr<EvaluationStage>> identical_precedences;
+
+        next_stage = root_stage;
+        precedence = FindOperatorPrecedenceForSymbol(root_stage->symbol_);
+
+        while (next_stage != nullptr) {
+            current_stage = next_stage;
+            next_stage = current_stage->right_stage_;
+
+            if (current_stage->left_stage_) {
+                RecorderStages(current_stage->left_stage_);
+            }
+
+            current_precedence = FindOperatorPrecedenceForSymbol(current_stage->symbol_);
+
+            // current precedence is same to right precedence, put to identical_predence.
+            if (current_precedence == precedence) {
+                identical_precedences.push_back(current_stage);
+                continue;
+            }
+
+            if (identical_precedences.size() > 1) {
+                MirrorStageSubtree(identical_precedences);
+            }
+
+            identical_precedences = {current_stage};
+            precedence = current_precedence;
+        }
+
+        if (identical_precedences.size() > 1) {
+            MirrorStageSubtree(identical_precedences);
+        }
     }
 
     /*
@@ -97,7 +136,7 @@ namespace Cvaluate {
             StringOperatorSymbolMap valid_symbols, std::vector<TokenKind> valid_kinds,
             Precedent right_precedent, Precedent left_precedent) {
         ExpressionToken token;
-        OperatorSymbol symbol = OperatorSymbol::OperatorSymbol;
+        OperatorSymbol symbol = OperatorSymbol::VALUE;
         std::shared_ptr<EvaluationStage> right_stage = nullptr;
         std::shared_ptr<EvaluationStage> left_stage = nullptr;
         TypeChecks checks;
@@ -279,6 +318,49 @@ namespace Cvaluate {
         );
 
         return ret;
+    }
+
+    /*
+        Performs a "mirror" on a subtree of stages.
+        This mirror functionally inverts the order of execution for all members of the [stages] list.
+        That list is assumed to be a root-to-leaf (ordered) list of evaluation stages, where each is a right-hand stage of the last.
+    */
+    void MirrorStageSubtree(std::vector<std::shared_ptr<EvaluationStage>>& stages) {
+        std::shared_ptr<EvaluationStage> root_stage, inverse_stage, carry_stage, front_stage;
+
+        int stage_length = stages.size();
+
+        // reverse left and right
+        for (auto front_stage: stages) {
+            carry_stage = front_stage->right_stage_;
+            front_stage->right_stage_ = front_stage->left_stage_;
+            front_stage->left_stage_ = carry_stage;
+        }
+
+        // end left swaps with root right
+        root_stage = stages[0];
+        front_stage = stages.back();
+
+        carry_stage = front_stage->left_stage_;
+        front_stage->left_stage_ = root_stage->right_stage_;
+        root_stage->right_stage_ = carry_stage;
+
+        // for all non-root non-end stages, right is swapped with inverse stage right in list
+        for (int i = 0; i < (stage_length - 2) / 2 + 1; i++) {
+            front_stage = stages[i + 1];
+            inverse_stage = stages[stage_length - i - 1];
+
+            carry_stage = front_stage->right_stage_;
+            front_stage->right_stage_ = inverse_stage->right_stage_;
+            inverse_stage->right_stage_ = carry_stage;
+        }
+
+        // swap all other information with inverse stage
+        for (int i = 0; i < stage_length / 2; i++) {
+            front_stage = stages[i];
+            inverse_stage = stages[stage_length - i - 1];
+            front_stage->SwapWith(inverse_stage);
+        }
     }
     /*
         Maps a given [symbol] to a set of typechecks to be used during runtime.

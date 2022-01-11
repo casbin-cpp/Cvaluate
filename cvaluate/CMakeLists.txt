@@ -18,6 +18,7 @@ set(CVALUATE_SOURCE_FILES
     EvaluableExpression.cpp
     Parsing.cpp
     Token.cpp
+    OperatorSymbol.cpp
     pch.cpp
 )
 

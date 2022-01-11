@@ -24,6 +24,7 @@ EvaluableExpression::EvaluableExpression(std::string expression,
 
     this->e_tokens = ParseTokens(expression, functions);
 
+    this->e_evaluation_stage = PlanStages(this->e_tokens);
 };
 
 std::vector<ExpressionToken> EvaluableExpression::Tokens() {
@@ -31,8 +32,6 @@ std::vector<ExpressionToken> EvaluableExpression::Tokens() {
 }
 
 TokenAvaiableData EvaluableExpression::Evaluate(Parameters params) {
-
-    this->e_evaluation_stage = PlanStages(this->e_tokens);
 
     return EvaluateStage(this->e_evaluation_stage, params);
 }
