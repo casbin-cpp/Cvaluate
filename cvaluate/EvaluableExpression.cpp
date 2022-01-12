@@ -15,6 +15,7 @@
 */
 
 #include <EvaluableExpression.h>
+#include <Exception.h>
 
 namespace Cvaluate {
 
@@ -39,7 +40,7 @@ TokenAvaiableData EvaluableExpression::Evaluate(Parameters params) {
 TokenAvaiableData EvaluableExpression::EvaluateStage(std::shared_ptr<EvaluationStage> stage, Parameters params) {
     TokenAvaiableData left, right;
     if (stage == nullptr) {
-        // ;
+        throw Cvaluate::CvaluateException("Found empty stage.");
     }
 
     if (stage != nullptr && stage->left_stage_) {

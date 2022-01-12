@@ -70,7 +70,7 @@ namespace Cvaluate {
                     character = stream.get();
 
                     if (stream.good() && character == 'x') {
-                        auto [token_string, ok] = ReadUntilFalse(stream, false, true, true, IsHeaxDigit);
+                        auto token_string = ReadUntilFalse(stream, false, true, true, IsHeaxDigit).first;
                         auto token_value_int = std::stoi(token_string, nullptr, 16);
                         
                         kind = TokenKind::NUMERIC;
@@ -233,7 +233,7 @@ namespace Cvaluate {
     std::string ReadTokenUntilFalse(std::stringstream& stream, std::function<bool(char)> condition) {
         stream.unget();
         stream.clear();
-        auto [ans, _]  = ReadUntilFalse(stream, false, true, true, condition);
+        auto ans = ReadUntilFalse(stream, false, true, true, condition).first;
         return ans;
     }
 

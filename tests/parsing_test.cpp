@@ -24,8 +24,8 @@ namespace {
 struct TokenParsingTest {
 	std::string Name;     
 	std::string Input;
-    Cvaluate::ExpressionFunctionMap Functions;
     std::vector<Cvaluate::ExpressionToken> Expected;
+    Cvaluate::ExpressionFunctionMap Functions;
     TokenParsingTest(std::string name, std::string input, 
         std::vector<Cvaluate::ExpressionToken> expected, Cvaluate::ExpressionFunctionMap functions = {}) :
         Name(name), Input(input), Expected(expected), Functions(functions) {};
@@ -57,7 +57,7 @@ void RunTokenParsingTest(std::vector<TokenParsingTest>& token_parsing_tests) {
 
         ASSERT_EQ(actual_tokens.size(), expected_tokens.size());
 
-        for (auto i = 0; i < actual_tokens.size(); i++) {
+        for (size_t i = 0; i < actual_tokens.size(); i++) {
             auto actual_token = actual_tokens[i];
             auto expected_token = expected_tokens[i];
 

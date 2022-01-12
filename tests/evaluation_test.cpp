@@ -24,8 +24,8 @@ namespace {
 struct TokenEvaluationTest {
 	std::string Name;     
 	std::string Input;
-    Cvaluate::ExpressionFunctionMap Functions;
     Cvaluate::TokenAvaiableData Expected;
+    Cvaluate::ExpressionFunctionMap Functions;
     Cvaluate::Parameters Parameters;
     TokenEvaluationTest(
         std::string name,
@@ -1253,7 +1253,7 @@ TEST(TestEvaluation, TestParameterizedEvaluation) {
                 {
                     "sum",
                     [] (Cvaluate::TokenAvaiableData data) -> Cvaluate::TokenAvaiableData {
-                        float ans;
+                        float ans = 0;
                         for (auto& x: data) {
                             if (x.is_number_float()) {
                                 ans += x.get<float>();

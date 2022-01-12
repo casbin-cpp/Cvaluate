@@ -122,42 +122,42 @@ namespace Cvaluate {
     }
 
     TokenAvaiableData BitwiseNotStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("BitwiseNotStage Not Implement");
+        throw CvaluateException("BitwiseNotStage Not Implement");
     }
 
     TokenAvaiableData TernaryIfStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("TernaryIfStage Not Implement");
+        throw CvaluateException("TernaryIfStage Not Implement");
     }
 
     TokenAvaiableData TernaryElseStage(TokenAvaiableData, TokenAvaiableData, Parameters)  {
-        // throw CvaluateException("TernaryElseStage Not Implement");
+        throw CvaluateException("TernaryElseStage Not Implement");
     }
 
     TokenAvaiableData RegexStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("RegexStage Not Implement");
+        throw CvaluateException("RegexStage Not Implement");
     }
 
     TokenAvaiableData NotRegexStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("NotRegexStage Not Implement");
+        throw CvaluateException("NotRegexStage Not Implement");
     }
 
     TokenAvaiableData BitwiseOrStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("BitwiseOrStage Not Implement");
+        throw CvaluateException("BitwiseOrStage Not Implement");
     }
 
     TokenAvaiableData BitwiseAndStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("BitwiseAndStage Not Implement");
+        throw CvaluateException("BitwiseAndStage Not Implement");
     }
 
     TokenAvaiableData BitwiseXORStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("BitwiseXORStage Not Implement");
+        throw CvaluateException("BitwiseXORStage Not Implement");
     }
 
     TokenAvaiableData LeftShiftStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("LeftShiftStage Not Implement");
+        throw CvaluateException("LeftShiftStage Not Implement");
     }
     TokenAvaiableData RightShiftStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("RightShiftStage Not Implement");
+        throw CvaluateException("RightShiftStage Not Implement");
     }
 
     TokenAvaiableData NoopStageRight(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
@@ -165,7 +165,7 @@ namespace Cvaluate {
     }
     
     TokenAvaiableData InStage(TokenAvaiableData, TokenAvaiableData, Parameters) {
-        // throw CvaluateException("InStage Not Implement");
+        throw CvaluateException("InStage Not Implement");
     }
 
     TokenAvaiableData SeparatorStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {
@@ -231,7 +231,7 @@ namespace Cvaluate {
 
             nlohmann::json j = parameters[variable_name];
 
-            for (int i = 1; i < name_strings.size(); i++) {
+            for (size_t i = 1; i < name_strings.size(); i++) {
                 auto field_name = name_strings[i];
                 j = j[field_name];
             }

@@ -45,8 +45,8 @@ class EvaluableExpression {
          */
         std::vector<ExpressionToken> Tokens();
 
-        TokenAvaiableData Evaluate(Parameters);
-};
+        TokenAvaiableData Evaluate(Parameters = {});
+};  
 
 }
 

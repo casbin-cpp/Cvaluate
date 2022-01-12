@@ -20,10 +20,6 @@ if (CVALUATE_BUILD_TEST)
         parsing_test.cpp
     )
 
-    set(CVALUATE_TEST_HEADER
-
-    )
-
     add_executable(cvaluate_test ${CVALUATE_TEST_SOURCE} ${CVALUATE_TEST_HEADER})
 
     if(UNIX)
@@ -39,6 +35,7 @@ if (CVALUATE_BUILD_TEST)
         PRIVATE
         gtest_main
         cvaluate
+        nlohmann_json::nlohmann_json
     )
 
     include(GoogleTest)

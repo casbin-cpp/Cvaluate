@@ -67,8 +67,9 @@ OperatorPrecedence FindOperatorPrecedenceForSymbol(OperatorSymbol symbol)  {
             return OperatorPrecedence::FunctionalPrecedence;
         case OperatorSymbol::SEPARATE:
             return OperatorPrecedence::SeparatePrecedence;
+        default:
+            return OperatorPrecedence::ValuePrecedence;
 	}
 
-	return OperatorPrecedence::ValuePrecedence;
 }
 } // cvaluate
