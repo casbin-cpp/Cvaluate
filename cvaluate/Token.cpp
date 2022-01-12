@@ -96,7 +96,7 @@ namespace Cvaluate {
 
     bool GetTokenValueBool(TokenAvaiableData token_data) {
         if (token_data.is_boolean()) {
-            token_data.get<bool>();
+            return token_data.get<bool>();
         } else {
             throw CvaluateException("Can't get bool from current token");
         }
