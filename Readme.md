@@ -22,16 +22,16 @@ Provides support for evaluating arbitrary C-like artithmetic/string expressions 
 - [x] Support basic math expression.
     - [x] Support `+-*/`.
     - [x] Support compare operator.
-    - [ ] If two operator have same prority, like `"1 + 101 % 2 * 5"`. Because `2 * 5` is in the right stage of operator `%`, so it will calculate `2 * 5` first. In this case, we will get wrong answer `2` rather than `6`. This issue can be fixed by [reorderStages](https://github.com/Knetic/govaluate/blob/9aa49832a739dcd78a5542ff189fb82c3e423116/stagePlanner.go#L556).
+    - [x] If two operator have same prority, like `"1 + 101 % 2 * 5"`. Because `2 * 5` is in the right stage of operator `%`, so it will calculate `2 * 5` first. In this case, we will get wrong answer `2` rather than `6`. This issue can be fixed by [reorderStages](https://github.com/Knetic/govaluate/blob/9aa49832a739dcd78a5542ff189fb82c3e423116/stagePlanner.go#L556).
     - [ ] Support bit shift.  
 - [ ] Support variable and accessors.
     - [x] Support `Eval(params)`, `params` is a `map` like `name: object` in `gvaluate `.
     - [x] ~~Basic data type of `params` is `int ,float, string`.~~ Use [json](https://github.com/nlohmann/json) as base data type.
     - [x] Support simple field accessor using json.
-    - [ ] Object data of `params` should reload `operator[]` and `operator` for `access` and compare. Maybe we can accomplish it by define a base object or use template to support accessors.
+    - [x] Object data of `params` should reload `operator[]` and `operator` for `access` and compare. Maybe we can accomplish it by define a base object or use template to support accessors.
 
 - [ ] Add benchmark for Cvaluate.
-
+- [ ] Performance enhancement.
 
 ## Install Cvaluate
 

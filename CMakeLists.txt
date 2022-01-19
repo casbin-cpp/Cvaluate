@@ -45,6 +45,7 @@ endif()
 # Global CMake options.
 option(CVALUATE_INSTALL "State whether to install cavaluate" ON)
 option(CVALUATE_BUILD_TEST "State whether to build test" ON)
+option(CVALUATE_BUILD_BENCHMARK "State whether to build benchmark" ON)
 
 # Intrinsic directory paths
 set(CVALUATE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cvaluate)
