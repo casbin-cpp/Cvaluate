@@ -13,8 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#include "./EvaluationStage.h"
-#include "./Exception.h"
+#include <cvaluate/EvaluationStage.h>
+#include <cvaluate/Exception.h>
 
 namespace Cvaluate {
     TokenAvaiableData AddStage(TokenAvaiableData left, TokenAvaiableData right, Parameters) {

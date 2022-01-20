@@ -50,7 +50,7 @@ option(CVALUATE_BUILD_BENCHMARK "State whether to build benchmark" ON)
 # Intrinsic directory paths
 set(CVALUATE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cvaluate)
 set(CVALUATE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(CVALUATE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/cvaluate)
+set(CVALUATE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Do not output install messages.
 if(NOT DEFINED CMAKE_INSTALL_MESSAGE)

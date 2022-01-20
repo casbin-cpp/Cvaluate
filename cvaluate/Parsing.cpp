@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#include <Parising.h>
-#include <Exception.h>
+#include <cvaluate/Parising.h>
+#include <cvaluate/Exception.h>
 
 namespace Cvaluate {
     std::vector<ExpressionToken> ParseTokens(std::string& expression, ExpressionFunctionMap& functions) {

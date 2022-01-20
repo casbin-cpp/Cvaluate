@@ -30,5 +30,9 @@ if(CVALUATE_BUILD_TEST)
     # googletest
     # https://github.com/google/googletest
     find_package(googletest 1.11.0 REQUIRED)
-    
+    if(CVALUATE_BUILD_BENCHMARK)
+        # benchmark
+        # https://github.com/google/benchmark
+        find_package(benchmark 1.5.5 REQUIRED)
+    endif()
 endif()

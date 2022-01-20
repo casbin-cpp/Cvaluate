@@ -27,7 +27,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(cvaluate STATIC ${CVALUATE_SOURCE_FILES})
 
-target_precompile_headers(cvaluate PRIVATE ${CVALUATE_INCLUDE_DIR}/pch.h)
+target_precompile_headers(cvaluate PRIVATE ${CVALUATE_INCLUDE_DIR}/cvaluate/pch.h)
 target_include_directories(cvaluate PRIVATE ${CVALUATE_INCLUDE_DIR})
 target_link_libraries(
     cvaluate PRIVATE 
