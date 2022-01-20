@@ -25,8 +25,8 @@ namespace Cvaluate {
     using Parameters = std::unordered_map<std::string, TokenAvaiableData>;
     // Parameters kEmptyParameters;
     using EvaluationOperator = std::function<TokenAvaiableData(TokenAvaiableData, TokenAvaiableData, Parameters)>;
-    using StageTypeCheck = std::function<bool(TokenAvaiableData)>;
-    using StageCombinedTypeCheck = std::function<bool(TokenAvaiableData, TokenAvaiableData)>;
+    using StageTypeCheck = std::function<bool(TokenAvaiableData&)>;
+    using StageCombinedTypeCheck = std::function<bool(TokenAvaiableData&, TokenAvaiableData&)>;
 
     class EvaluationStage {
         public:
@@ -53,15 +53,15 @@ namespace Cvaluate {
             bool IsShortCircuitable();
     };
 
-    bool IsString(TokenAvaiableData value);
-    bool IsBool(TokenAvaiableData value);
-    bool IsNumeric(TokenAvaiableData value);
-    bool IsFloat(TokenAvaiableData value);
-    bool IsInt(TokenAvaiableData value);
-    bool IsArray(TokenAvaiableData value);
-    bool IsRegexOrString(TokenAvaiableData value);
-    bool AdditionTypeCheck(TokenAvaiableData left, TokenAvaiableData right);
-    bool ComparatorTypeCheck(TokenAvaiableData left, TokenAvaiableData right);
+    bool IsString(TokenAvaiableData& value);
+    bool IsBool(TokenAvaiableData& value);
+    bool IsNumeric(TokenAvaiableData& value);
+    bool IsFloat(TokenAvaiableData& value);
+    bool IsInt(TokenAvaiableData& value);
+    bool IsArray(TokenAvaiableData& value);
+    bool IsRegexOrString(TokenAvaiableData& value);
+    bool AdditionTypeCheck(TokenAvaiableData& left, TokenAvaiableData& right);
+    bool ComparatorTypeCheck(TokenAvaiableData& left, TokenAvaiableData& right);
 
     // Operator type
     TokenAvaiableData AddStage(TokenAvaiableData, TokenAvaiableData, Parameters = {});

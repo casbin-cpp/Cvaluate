@@ -244,31 +244,31 @@ namespace Cvaluate {
         return ret;
     }
 
-    bool IsString(TokenAvaiableData value) {
+    bool IsString(TokenAvaiableData& value) {
         return value.is_string();
     }
 
-    bool IsBool(TokenAvaiableData value) {
+    bool IsBool(TokenAvaiableData& value) {
         return value.is_boolean();
     }
 
-    bool IsNumeric(TokenAvaiableData value) {
+    bool IsNumeric(TokenAvaiableData& value) {
         return IsFloat(value) || IsInt(value);
     }
 
-    bool IsFloat(TokenAvaiableData value) {
+    bool IsFloat(TokenAvaiableData& value) {
         return value.is_number_float();
     }
 
-    bool IsInt(TokenAvaiableData value) {
+    bool IsInt(TokenAvaiableData& value) {
         return value.is_number_integer();
     }
 
-    bool IsArray(TokenAvaiableData value) {
+    bool IsArray(TokenAvaiableData& value) {
         return value.is_object();
     }
 
-    bool AdditionTypeCheck(TokenAvaiableData left, TokenAvaiableData right) {
+    bool AdditionTypeCheck(TokenAvaiableData& left, TokenAvaiableData& right) {
         if (IsNumeric(left) && IsNumeric(right)) {
             return true;
         }
@@ -280,7 +280,7 @@ namespace Cvaluate {
         return true;
     }
 
-    bool ComparatorTypeCheck(TokenAvaiableData left, TokenAvaiableData right) {
+    bool ComparatorTypeCheck(TokenAvaiableData& left, TokenAvaiableData& right) {
         if (IsNumeric(left) && IsNumeric(right)) {
             return true;
         }
@@ -293,7 +293,7 @@ namespace Cvaluate {
     }
 
 
-    bool IsRegexOrString(TokenAvaiableData value) {
+    bool IsRegexOrString(TokenAvaiableData& value) {
         return IsString(value);
     }
 

@@ -26,8 +26,8 @@ namespace Cvaluate {
     
     ExpressionToken Readtoken(std::stringstream& stream, TokenState& state, ExpressionFunctionMap functions);
     std::string ReadTokenUntilFalse(std::stringstream& stream, std::function<bool(char character)> condition);
-    std::pair<std::string, bool> ReadUntilFalse(std::stringstream& stream, bool include_white_space, bool break_white_space, 
-            bool allow_escaping, std::function<bool(char character)> condition);
+    std::string ReadUntilFalse(std::stringstream& stream, bool include_white_space, bool break_white_space, 
+            bool allow_escaping, std::function<bool(char character)> condition, bool& conditioned);
 
     std::vector<std::string> Split(std::string str, const std::string& del, int limit);
 

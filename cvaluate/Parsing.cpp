@@ -50,6 +50,7 @@ namespace Cvaluate {
         std::string token_string;
         TokenAvaiableValue token_value;
         ExpressionToken ret;
+        bool conditioned;
 
         while (stream.good()) {
             char character = stream.get();
@@ -70,7 +71,7 @@ namespace Cvaluate {
                     character = stream.get();
 
                     if (stream.good() && character == 'x') {
-                        auto token_string = ReadUntilFalse(stream, false, true, true, IsHeaxDigit).first;
+                        auto token_string = ReadUntilFalse(stream, false, true, true, IsHeaxDigit, conditioned);
                         auto token_value_int = std::stoi(token_string, nullptr, 16);
                         
                         kind = TokenKind::NUMERIC;
@@ -104,11 +105,11 @@ namespace Cvaluate {
 
             // escaped variable
             if (character == '[') {
-                auto [token_string, ok] = ReadUntilFalse(stream, true, false, true, IsNotClosingBracket);
+                auto token_string = ReadUntilFalse(stream, true, false, true, IsNotClosingBracket, conditioned);
                 kind = TokenKind::VARIABLE;
                 token_value = token_string;
 
-                if (!ok) {
+                if (!conditioned) {
                     throw CvaluateException("Broken operator of []");
                     return ret;
                 }
@@ -160,9 +161,9 @@ namespace Cvaluate {
 
             // ' / "
             if (!IsNotQuote(character)) {
-                auto [token_string, ok] = ReadUntilFalse(stream, true, false, true, IsNotQuote);
+                auto token_string = ReadUntilFalse(stream, true, false, true, IsNotQuote, conditioned);
 
-                if (!ok) {
+                if (!conditioned) {
                     throw CvaluateException("Unclosed string literal \' \'");
                 }
 
@@ -233,16 +234,16 @@ namespace Cvaluate {
     std::string ReadTokenUntilFalse(std::stringstream& stream, std::function<bool(char)> condition) {
         stream.unget();
         stream.clear();
-        auto ans = ReadUntilFalse(stream, false, true, true, condition).first;
-        return ans;
+        bool conditioned;
+        return ReadUntilFalse(stream, false, true, true, condition, conditioned);
     }
 
     // Read string until condition occur.
-    std::pair<std::string, bool> ReadUntilFalse(std::stringstream& stream, bool include_white_space, bool break_white_space, 
-            bool allow_escaping, std::function<bool(char)> condition) {
+    std::string ReadUntilFalse(std::stringstream& stream, bool include_white_space, bool break_white_space, 
+            bool allow_escaping, std::function<bool(char)> condition, bool& conditioned) {
         std::string token;
         char character;
-        bool conditioned = false;
+        conditioned = false;
 
         while (stream.good()) {
             character = stream.get();
@@ -278,7 +279,7 @@ namespace Cvaluate {
             }
         }
 
-        return {token, conditioned};
+        return token;
     }
 
     #define LARGE 2147483647
