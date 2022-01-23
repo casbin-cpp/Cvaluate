@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#include <EvaluableExpression.h>
-#include <Exception.h>
+#include <cvaluate/EvaluableExpression.h>
+#include <cvaluate/Exception.h>
 
 namespace Cvaluate {
 

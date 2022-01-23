@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#include <Token.h>
-#include <Exception.h>
+#include <cvaluate/Token.h>
+#include <cvaluate/Exception.h>
 
 namespace Cvaluate {
     bool CanTransitionTo(const TokenState& cur_state, const TokenKind& next_kind) {

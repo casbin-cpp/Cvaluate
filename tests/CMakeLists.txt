@@ -42,3 +42,9 @@ if (CVALUATE_BUILD_TEST)
     gtest_discover_tests(cvaluate_test)
 
 endif()
+
+if(CVALUATE_BUILD_BENCHMARK)
+  add_subdirectory(benchmarks)
+endif()
+
+add_subdirectory(profiling)

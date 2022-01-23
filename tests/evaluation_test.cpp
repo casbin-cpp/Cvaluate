@@ -14,7 +14,8 @@
 * limitations under the License.
 */
 #include <gtest/gtest.h>
-#include <EvaluableExpression.h>
+#include <cvaluate/EvaluableExpression.h>
+#include "./test_config.h"
 
 namespace {
 
@@ -34,21 +35,6 @@ struct TokenEvaluationTest {
         Cvaluate::ExpressionFunctionMap functions = {},
         Cvaluate::Parameters parameters = {}
     ) : Name(name), Input(input), Expected(expected), Functions(functions), Parameters(parameters) {};
-};
-
-Cvaluate::TokenAvaiableData dummyParameterInstance = {
-        {"String", "string!"},
-        {"Int", 101},
-        {"BoolFalse", false},
-        {"Nested", 
-            {
-                {"Funk", "funkalicious"},
-            }
-        }
-    };
-
-Cvaluate::Parameters fooParameter = {
-	{"foo", dummyParameterInstance}
 };
 
 void Assert_Value(Cvaluate::TokenAvaiableData& expected, Cvaluate::TokenAvaiableData& actual, TokenEvaluationTest& test_case) {
