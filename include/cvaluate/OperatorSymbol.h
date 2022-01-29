@@ -156,5 +156,13 @@ namespace Cvaluate {
         {",", OperatorSymbol::SEPARATE}
     };
 
+    const StringOperatorSymbolMap kLogicalAndSymbols = {
+        {"&&", OperatorSymbol::AND}
+    };
+
+    const StringOperatorSymbolMap kLogicalOrSymbols = {
+        {"||", OperatorSymbol::OR}
+    };
+
 } // Cvaluate
 #endif

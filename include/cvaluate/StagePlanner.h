@@ -30,12 +30,12 @@ namespace Cvaluate {
 
     class PrecedencePlanner {
         public:
-            StringOperatorSymbolMap valid_symbols;
-            std::vector<TokenKind> valid_kinds;
+            const StringOperatorSymbolMap* valid_symbols = nullptr;
+            const std::vector<TokenKind>* valid_kinds = nullptr;
             Precedent next;
             Precedent next_right;
 
-            PrecedencePlanner(StringOperatorSymbolMap valid_symbols, std::vector<TokenKind> valid_kinds,
+            PrecedencePlanner(const StringOperatorSymbolMap* valid_symbols, const std::vector<TokenKind>* valid_kinds,
                             Precedent next, Precedent next_right) {
                 this->valid_symbols = valid_symbols;
                 this->valid_kinds = valid_kinds;
@@ -43,31 +43,36 @@ namespace Cvaluate {
                 this->next_right = next_right;
             };
 
+            PrecedencePlanner(PrecedencePlanner const& other) {
+                this->valid_symbols = other.valid_symbols;
+                this->valid_kinds = other.valid_kinds;
+                this->next = other.next;
+                this->next_right = other.next_right;
+            };
+
             std::shared_ptr<EvaluationStage> PlanPrecedenceLevel(TokenStream& stream,
-                StringOperatorSymbolMap vlaid_symbols, std::vector<TokenKind> valid_kinds,
-                Precedent right_precedent, Precedent left_precedent);
+                const StringOperatorSymbolMap* vlaid_symbols, const std::vector<TokenKind>* valid_kinds,
+                Precedent& right_precedent, Precedent& left_precedent);
 
             std::shared_ptr<EvaluationStage> operator()(TokenStream& stream) {
                 Precedent generated = nullptr;
-                Precedent nextRight = nullptr;
+                Precedent* nextRight = &this->next_right;
 
                 generated = [&] (TokenStream& stream) -> std::shared_ptr<EvaluationStage> {
                     return PlanPrecedenceLevel(
                         stream,
                         this->valid_symbols,
                         this->valid_kinds,
-                        nextRight,
+                        *nextRight,
                         this->next
                     );
                 };
 
                 // left precence > current, right precence >= current
-                if (this->next_right != nullptr) {
-                    nextRight = this->next_right;
-                } else {
-                    nextRight = generated;
-                }
-                
+                if (this->next_right == nullptr) {
+                    nextRight = &generated;
+                }                
+
                 return generated(stream);
             }
     };
