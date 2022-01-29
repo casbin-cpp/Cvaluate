@@ -49,18 +49,25 @@ namespace Cvaluate {
         {OperatorSymbol::SEPARATE, SeparatorStage},
     };
 
+    const static std::vector<TokenKind> kPrefixKind = {TokenKind::PREFIX};
+    const static std::vector<TokenKind> kModifierKind = {TokenKind::MODIFIER};
+    const static std::vector<TokenKind> kComparatorKind = {TokenKind::COMPARATOR};
+    const static std::vector<TokenKind> kLogicalopKind = {TokenKind::LOGICALOP};
+    const static std::vector<TokenKind> kTernaryKind = {TokenKind::TERNARY};
+    const static std::vector<TokenKind> kSeparatorKind = {TokenKind::SEPARATOR};
+
     Precedent planFunctions = PlanFunctions;
-    PrecedencePlanner planPrefix(kPrefixSymbols, {TokenKind::PREFIX}, nullptr, planFunctions);
-    PrecedencePlanner planExponential(kExponentialSymbolsS, {TokenKind::MODIFIER}, planFunctions, nullptr);
-    PrecedencePlanner planMultiplicative(kMultiplicativeSymbols, {TokenKind::MODIFIER}, planExponential, nullptr);
-    PrecedencePlanner planAdditive(kAdditiveSymbols, {TokenKind::MODIFIER}, planMultiplicative, nullptr);
-    PrecedencePlanner planShift(kBitwiseShiftSymbols, {TokenKind::MODIFIER}, planAdditive, nullptr);
-    PrecedencePlanner planBitwise(kBitwiseSymbols, {TokenKind::MODIFIER}, planShift, nullptr);
-    PrecedencePlanner planComparator(kComparatorSymbols, {TokenKind::COMPARATOR}, planBitwise, nullptr);
-    PrecedencePlanner planLogicalAnd({{"&&", OperatorSymbol::AND}}, {TokenKind::LOGICALOP}, planComparator, nullptr);
-    PrecedencePlanner planLogicalOr({{"||", OperatorSymbol::OR}}, {TokenKind::LOGICALOP}, planLogicalAnd, nullptr);
-    PrecedencePlanner planTernary(kTernarySymbols, {TokenKind::TERNARY}, planLogicalOr, nullptr);
-    PrecedencePlanner planSeparator(kSeparatorSymbols, {TokenKind::SEPARATOR}, planTernary, nullptr);
+    PrecedencePlanner planPrefix(&kPrefixSymbols, &kPrefixKind, nullptr, planFunctions);
+    PrecedencePlanner planExponential(&kExponentialSymbolsS, &kModifierKind, planFunctions, nullptr);
+    PrecedencePlanner planMultiplicative(&kMultiplicativeSymbols, &kModifierKind, planExponential, nullptr);
+    PrecedencePlanner planAdditive(&kAdditiveSymbols, &kModifierKind, planMultiplicative, nullptr);
+    PrecedencePlanner planShift(&kBitwiseShiftSymbols, &kModifierKind, planAdditive, nullptr);
+    PrecedencePlanner planBitwise(&kBitwiseSymbols, &kModifierKind, planShift, nullptr);
+    PrecedencePlanner planComparator(&kComparatorSymbols, &kComparatorKind, planBitwise, nullptr);
+    PrecedencePlanner planLogicalAnd(&kLogicalAndSymbols, &kLogicalopKind, planComparator, nullptr);
+    PrecedencePlanner planLogicalOr(&kLogicalOrSymbols, &kLogicalopKind, planLogicalAnd, nullptr);
+    PrecedencePlanner planTernary(&kTernarySymbols, &kTernaryKind, planLogicalOr, nullptr);
+    PrecedencePlanner planSeparator(&kSeparatorSymbols, &kSeparatorKind, planTernary, nullptr);
 
     /*
         Creates a `evaluationStageList` object which represents an execution plan (or tree)
@@ -68,7 +75,7 @@ namespace Cvaluate {
         The three stages of evaluation can be thought of as parsing strings to tokens, then tokens to a stage list, then evaluation with parameters.
     */
     std::shared_ptr<EvaluationStage> PlanStages(std::vector<ExpressionToken>& tokens) {
-        auto stream = TokenStream(tokens);
+        TokenStream stream(tokens);
 
         auto stage = PlanTokens(stream);
 
@@ -133,8 +140,8 @@ namespace Cvaluate {
         Most stages use the same logic
     */
     std::shared_ptr<EvaluationStage> PrecedencePlanner::PlanPrecedenceLevel(TokenStream& stream,
-            StringOperatorSymbolMap valid_symbols, std::vector<TokenKind> valid_kinds,
-            Precedent right_precedent, Precedent left_precedent) {
+            const StringOperatorSymbolMap* valid_symbols, const std::vector<TokenKind>* valid_kinds,
+            Precedent& right_precedent, Precedent& left_precedent) {
         ExpressionToken token;
         OperatorSymbol symbol = OperatorSymbol::VALUE;
         std::shared_ptr<EvaluationStage> right_stage = nullptr;
@@ -149,18 +156,18 @@ namespace Cvaluate {
         while (stream.HasNext()) {
             token = *stream.Next();
 
-            if (valid_kinds.size() > 0) {
+            if (valid_kinds->size() > 0) {
                 key_found = false;
 
-                auto find_key = std::find(valid_kinds.begin(), valid_kinds.end(), token.Kind);
-                key_found = (find_key != valid_kinds.end());
+                auto find_key = std::find(valid_kinds->begin(), valid_kinds->end(), token.Kind);
+                key_found = (find_key != valid_kinds->end());
 
                 if (!key_found) {
                     break;
                 }
             }
 
-            if (!valid_symbols.empty()) {
+            if (!valid_symbols->empty()) {
                 auto data = GetTokenValueData(token.Value);
                 if (!IsString(data)) {
                     break;
@@ -168,10 +175,10 @@ namespace Cvaluate {
 
                 auto token_string = data.get<std::string>();
 
-                if (valid_symbols.find(token_string) == valid_symbols.end()) {
+                if (valid_symbols->find(token_string) == valid_symbols->end()) {
                     break;
                 } else {
-                    symbol = valid_symbols[token_string];
+                    symbol = valid_symbols->at(token_string);
                 }
             }
 

@@ -22,10 +22,10 @@
 namespace Cvaluate {
     class TokenStream {
         private:
-            std::vector<ExpressionToken> tokens;
+            std::vector<ExpressionToken>& tokens;
             std::vector<ExpressionToken>::iterator index;
         public:
-            TokenStream(std::vector<ExpressionToken> _tokens) : tokens(_tokens) {
+            TokenStream(std::vector<ExpressionToken>& _tokens) : tokens(_tokens) {
                 this->index = tokens.begin();
             };
 
